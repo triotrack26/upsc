@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Prep Pro | AI-Powered Learning Portal</title>
+    <title>UPSC Prep Pro | Hybrid AI-Normal Learning Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -55,7 +55,7 @@
 
         #main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         #header { height: 70px; background-color: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .header-actions { display: flex; gap: 20px; align-items: center; }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
         
         #view-container { flex: 1; padding: 30px; overflow-y: auto; }
         .view { display: none; animation: fadeIn 0.3s ease-out; }
@@ -72,15 +72,18 @@
 
         .btn { background-color: var(--primary); color: white; padding: 10px 18px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
         .btn:hover { background-color: var(--primary-dark); }
-        .btn-outline { border: 1px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; }
+        .btn-outline { border: 1px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-outline:hover { background-color: var(--bg-main); border-color: var(--text-muted); }
-        .btn-ai { background: linear-gradient(135deg, #7c3aed, #2563eb); color: white; border: none; }
-        .btn-ai:hover { opacity: 0.9; transform: translateY(-1px); }
+        
+        /* AI HYBRID MODES */
+        .btn-mode-switch { background: #e5e7eb; color: #374151; font-weight: bold; border: 1px solid var(--border); }
+        .btn-mode-switch.ai-active { background: linear-gradient(135deg, #7c3aed, #2563eb); color: white; border: none; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+        .ai-feature-container { transition: all 0.3s ease; }
+        .ai-feature-container.hidden-mode { display: none !important; }
 
-        /* AI FEATURE SHINE EFFECT */
         .ai-gradient-border { border: 1px solid transparent; background: linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box, linear-gradient(135deg, #7c3aed, #3b82f6) border-box; }
 
-        /* --- PRACTICE & QUIZ OPTIONS --- */
+        /* --- PRACTICE FILTER TABS --- */
         .subject-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
         .filter-btn { padding: 6px 14px; border-radius: 20px; background-color: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); font-size: 14px; }
         .filter-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
@@ -93,13 +96,13 @@
         .option.disabled { cursor: not-allowed; }
         .option-label { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; }
 
-        /* AI CHAT ASSISTANT */
-        .ai-chat-window { max-height: 250px; overflow-y: auto; padding: 10px; background: var(--bg-main); border-radius: 8px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        /* CHAT SYSTEMS */
+        .ai-chat-window { max-height: 200px; overflow-y: auto; padding: 10px; background: var(--bg-main); border-radius: 8px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
         .chat-bubble { padding: 10px 14px; border-radius: 12px; max-width: 85%; font-size: 14px; line-height: 1.5; }
         .chat-bubble.user { background-color: var(--primary); color: white; align-self: flex-end; }
-        .chat-bubble.ai { background-color: var(--bg-surface); color: var(--text-main); align-self: flex-start; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .chat-bubble.ai { background-color: var(--bg-surface); color: var(--text-main); align-self: flex-start; border: 1px solid var(--border); }
 
-        /* --- NOTES LAYOUT --- */
+        /* --- NOTES STORAGE MANAGEMENT --- */
         .notes-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; height: calc(100vh - 170px); }
         .notes-list { background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border); padding: 15px; overflow-y: auto; }
         .note-item { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; border-radius: 6px; margin-bottom: 5px; }
@@ -120,13 +123,13 @@
 <body>
 
     <nav id="sidebar">
-        <div class="logo"><i class="fas fa-graduation-cap"></i> UPSC AI Portal</div>
+        <div class="logo"><i class="fas fa-graduation-cap"></i> UPSC Portal</div>
         <div class="nav-links">
             <div class="nav-item active" onclick="app.switchView('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
             <div class="nav-item" onclick="app.switchView('prelims')"><i class="fas fa-edit"></i> Prelims Practice</div>
-            <div class="nav-item" onclick="app.switchView('mains')"><i class="fas fa-pen-fancy"></i> Mains Evaluation</div>
+            <div class="nav-item" onclick="app.switchView('mains')"><i class="fas fa-pen-fancy"></i> Mains Workspace</div>
             <div class="nav-item" onclick="app.switchView('notes')"><i class="fas fa-folder-open"></i> Smart Notes</div>
-            <div class="nav-item" onclick="app.switchView('interview')"><i class="fas fa-microphone-alt"></i> Voice Interview Lab</div>
+            <div class="nav-item" onclick="app.switchView('interview')"><i class="fas fa-microphone-alt"></i> Interview Desk</div>
         </div>
     </nav>
 
@@ -134,8 +137,10 @@
         <header id="header">
             <h2 id="page-title" style="font-size: 18px; font-weight: 600;">Dashboard</h2>
             <div class="header-actions">
-                <button class="btn-outline" style="font-size: 13px; color: var(--ai-glow); border-color: var(--ai-glow);"><i class="fas fa-robot"></i> AI Engine Active</button>
-                <button onclick="app.toggleTheme()" style="color: var(--text-main); font-size: 18px;"><i class="fas fa-moon" id="theme-icon"></i></button>
+                <button id="mode-toggle-btn" class="btn-outline btn-mode-switch ai-active" onclick="app.toggleAIMode()">
+                    <i class="fas fa-robot"></i> <span id="mode-status-text">AI Mode: Enabled</span>
+                </button>
+                <button onclick="app.toggleTheme()" style="color: var(--text-main); font-size: 18px; padding: 5px;"><i class="fas fa-moon" id="theme-icon"></i></button>
             </div>
         </header>
 
@@ -149,22 +154,20 @@
                     </div>
                     <div class="card stat-card">
                         <div class="stat-icon" style="background: #10b981;"><i class="fas fa-bullseye"></i></div>
-                        <div class="stat-info"><h3>AI Diagnostic Accuracy</h3><p id="accuracy-display">--</p></div>
+                        <div class="stat-info"><h3>Global Accuracy</h3><p id="accuracy-display">--</p></div>
                     </div>
                     <div class="card stat-card">
-                        <div class="stat-icon" style="background: #8b5cf6;"><i class="fas fa-brain"></i></div>
-                        <div class="stat-info"><h3>Total Solved</h3><p id="solved-display">--</p></div>
+                        <div class="stat-icon" style="background: #8b5cf6;"><i class="fas fa-database"></i></div>
+                        <div class="stat-info"><h3>Solved Count</h3><p id="solved-display">--</p></div>
                     </div>
                 </div>
 
-                <div class="card ai-gradient-border">
+                <div id="dashboard-ai-card" class="card ai-gradient-border ai-feature-container">
                     <div class="flex-between">
-                        <h3 style="color: var(--ai-glow); font-size: 16px;"><i class="fas fa-robot"></i> Instant AI Performance Insights</h3>
-                        <button class="btn btn-ai" style="padding: 4px 10px; font-size: 12px;" onclick="aiEngine.generatePerformanceInsight()">Refresh Insight</button>
+                        <h3 style="color: var(--ai-glow); font-size: 16px;"><i class="fas fa-brain"></i> AI Performance Telemetry Diagnostic</h3>
+                        <button class="btn" style="background: var(--ai-glow); padding: 4px 10px; font-size: 12px;" onclick="aiEngine.generatePerformanceInsight()">Recalculate</button>
                     </div>
-                    <p id="ai-insight-text" style="margin-top: 10px; font-size: 14px; line-height: 1.6; color: var(--text-main);">
-                        Analyzing telemetry... Solve more Prelims questions to compute exact optimization steps.
-                    </p>
+                    <p id="ai-insight-text" style="margin-top: 10px; font-size: 14px; line-height: 1.6;"></p>
                 </div>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
@@ -173,9 +176,8 @@
                         <canvas id="performanceChart" height="180"></canvas>
                     </div>
                     <div class="card">
-                        <h3>Dynamic Daily Targets</h3>
-                        <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;" id="target-list">
-                            </div>
+                        <h3>Standard Preparation Targets</h3>
+                        <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;" id="target-list"></div>
                     </div>
                 </div>
             </div>
@@ -183,117 +185,127 @@
             <div id="prelims" class="view">
                 <div class="flex-between mb-3">
                     <h2>Smart Practice Matrix</h2>
-                    <button class="btn" onclick="app.loadNextQuestion()">Next Matrix Question <i class="fas fa-chevron-right"></i></button>
+                    <button class="btn" onclick="app.loadNextQuestion()">Next Question <i class="fas fa-chevron-right"></i></button>
                 </div>
                 <div class="subject-filters">
-                    <button class="filter-btn active" onclick="app.setSubject('All')">All Concepts</button>
+                    <button class="filter-btn active" onclick="app.setSubject('All')">Mixed Bag</button>
                     <button class="filter-btn" onclick="app.setSubject('Polity')">Polity</button>
                     <button class="filter-btn" onclick="app.setSubject('History')">History</button>
                     <button class="filter-btn" onclick="app.setSubject('Economy')">Economy</button>
-                    <button class="filter-btn" onclick="app.setSubject('CSAT')">CSAT Quantitative</button>
+                    <button class="filter-btn" onclick="app.setSubject('CSAT')">CSAT</button>
                 </div>
 
                 <div class="card">
-                    <div style="color: var(--text-muted); font-size:12px; font-weight:600;" id="q-metadata">LOADING ENGINE...</div>
+                    <div style="color: var(--text-muted); font-size:12px; font-weight:600;" id="q-metadata">LOADING...</div>
                     <div id="q-text" style="font-size: 16px; font-weight:600; margin-top:10px; line-height:1.5;"></div>
                     <div class="options-grid" id="q-options"></div>
                     
-                    <div class="card mt-3 hidden" id="q-explanation" style="border-left: 4px solid var(--success); background: rgba(16, 185, 129, 0.02);">
-                        <h4 style="color: var(--success); font-size:14px;"><i class="fas fa-check-circle"></i> Technical Solution</h4>
+                    <div class="card mt-3 hidden" id="q-explanation" style="border-left: 4px solid var(--success); background: rgba(16, 185, 129, 0.01);">
+                        <h4 style="color: var(--success); font-size:14px;"><i class="fas fa-check-circle"></i> Solution Analysis</h4>
                         <p id="exp-text" style="font-size: 14px; margin-top:5px; line-height:1.5;"></p>
                     </div>
 
-                    <div class="card ai-gradient-border mt-3">
-                        <h4 style="color: var(--ai-glow); font-size:14px;"><i class="fas fa-comment-dots"></i> 1-Click AI Instant Doubt Assistant</h4>
+                    <div id="prelims-ai-chat" class="card ai-gradient-border mt-3 ai-feature-container">
+                        <h4 style="color: var(--ai-glow); font-size:14px;"><i class="fas fa-comment-dots"></i> 1-Click AI Instant Inquiry Desk</h4>
                         <div class="ai-chat-window" id="ai-chat-output">
-                            <div class="chat-bubble ai">Hello! Ask me any doubt about this question or related UPSC structural concepts. I process queries instantly.</div>
+                            <div class="chat-bubble ai">Hello! Ask me any structural questions regarding this topic. Responses generate instantly under active AI Mode.</div>
                         </div>
                         <div style="display:flex; gap:10px; margin-top:10px;">
-                            <input type="text" id="ai-chat-input" placeholder="Ask about constitutional articles, historical connections, or core rules..." style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
-                            <button class="btn btn-ai" onclick="aiEngine.askDoubt()">Query AI</button>
+                            <input type="text" id="ai-chat-input" placeholder="Type your dynamic doubt here..." style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
+                            <button class="btn" style="background:var(--ai-glow);" onclick="aiEngine.askDoubt()">Query AI</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="mains" class="view">
-                <h2>AI Mains Answer Evaluator</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Submit responses below to run syntactic structure analysis checking against structural parameters.</p>
+                <h2>Mains Answer Testing Terminal</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Draft comprehensive analytical solutions matching UPSC grading metrics.</p>
                 
-                <div style="display:grid; grid-template-columns: 1fr 320px; gap:20px;">
+                <div style="display:grid; grid-template-columns: 1fr 320px; gap:20px; flex-wrap: wrap;">
                     <div class="card">
                         <div class="flex-between mb-3">
-                            <span style="font-weight:600; font-size:14px; color:var(--primary)">GS Paper II - Polity & Governance</span>
-                            <span class="tag" style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding:3px 8px; border-radius:4px; font-size:12px;">Core 15-Marker</span>
+                            <span style="font-weight:600; font-size:14px; color:var(--primary)">GS Paper II - Polity Frictions</span>
+                            <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600;">15 Marks</span>
                         </div>
-                        <h3 style="font-size: 16px; line-height: 1.5; margin-bottom:15px;">"The office of the Governor is not a decorative emblem but an active functional component of federal architecture." Critically evaluate in light of recent constitutional frictions.</h3>
-                        <textarea id="mains-answer-input" placeholder="Type or paste your complete multi-paragraph answer structure here (Minimum 100 words for proper AI linguistic telemetry analysis)..." style="width:100%; height:280px; padding:15px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main); line-height:1.6; resize:none;"></textarea>
-                        <button class="btn btn-ai mt-3" style="width:100%; justify-content:center;" onclick="aiEngine.evaluateMainsAnswer()"><i class="fas fa-microchip"></i> Run Instant Structural AI Grading Matrix</button>
+                        <h3 style="font-size: 16px; line-height: 1.5; margin-bottom:15px;">"The office of the Governor is not a decorative emblem but an active functional component of federal architecture." Critically evaluate in light of recent structural friction points.</h3>
+                        <textarea id="mains-answer-input" placeholder="Type your multi-paragraph solution here..." style="width:100%; height:250px; padding:15px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main); line-height:1.6; resize:none;"></textarea>
+                        
+                        <div class="mt-3" style="display:flex; gap:10px;">
+                            <button class="btn" style="background: var(--success);" onclick="alert('Response committed to local database storage profile.')"><i class="fas fa-save"></i> Save Draft</button>
+                            <button id="mains-ai-btn" class="btn ai-feature-container" style="background: var(--ai-glow);" onclick="aiEngine.evaluateMainsAnswer()"><i class="fas fa-microchip"></i> Run Structural AI Evaluation</button>
+                        </div>
                     </div>
 
-                    <div class="card ai-gradient-border hidden" id="mains-ai-report">
-                        <h4><i class="fas fa-file-invoice"></i> AI Evaluation Matrix</h4>
-                        <div style="margin-top:15px; display:flex; flex-direction:column; gap:15px;">
+                    <div id="mains-ai-report" class="card ai-gradient-border ai-feature-container">
+                        <h4><i class="fas fa-file-invoice"></i> AI Diagnostic Matrix</h4>
+                        <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
                             <div>
-                                <div class="flex-between"><span style="font-size:13px;">Structure & Flow</span><strong id="score-structure">0/10</strong></div>
+                                <div class="flex-between"><span style="font-size:13px;">Format & Layout Flow</span><strong id="score-structure">0/10</strong></div>
                                 <div style="height:6px; background:var(--bg-main); border-radius:3px; margin-top:4px;"><div id="bar-structure" style="height:100%; width:0%; background:var(--ai-glow); border-radius:3px; transition: var(--transition);"></div></div>
                             </div>
                             <div>
                                 <div class="flex-between"><span style="font-size:13px;">Constitutional Citations</span><strong id="score-citations">0/10</strong></div>
                                 <div style="height:6px; background:var(--bg-main); border-radius:3px; margin-top:4px;"><div id="bar-citations" style="height:100%; width:0%; background:var(--success); border-radius:3px; transition: var(--transition);"></div></div>
                             </div>
-                            <div>
-                                <div class="flex-between"><span style="font-size:13px;">Critical Analysis Element</span><strong id="score-critical">0/10</strong></div>
-                                <div style="height:6px; background:var(--bg-main); border-radius:3px; margin-top:4px;"><div id="bar-critical" style="height:100%; width:0%; background:var(--warning); border-radius:3px; transition: var(--transition);"></div></div>
-                            </div>
                         </div>
-                        <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
-                            <h5 style="font-size:12px; color:var(--text-muted); text-transform:uppercase;">AI Diagnostic Critique:</h5>
-                            <p id="mains-ai-critique" style="font-size:13px; margin-top:5px; line-height:1.5; color:var(--text-main);"></p>
+                        <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
+                            <h5 style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Critique Metric Output:</h5>
+                            <p id="mains-ai-critique" style="font-size:13px; margin-top:5px; line-height:1.4; color:var(--text-main);">Submit your written structure to calculate parameters.</p>
                         </div>
+                    </div>
+                    
+                    <div id="mains-normal-checklist" class="card hidden">
+                        <h4><i class="fas fa-tasks"></i> Manual Marking Checklist</h4>
+                        <ul style="margin-left:20px; margin-top:10px; font-size:13px; display:flex; flex-direction:column; gap:8px; color:var(--text-muted);">
+                            <li>Verified explicit intro defining role of Article 153/154?</li>
+                            <li>Cited case frameworks (e.g. S.R. Bommai parameters)?</li>
+                            <li>Balanced forward recommendations presented inside final summary?</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
             <div id="notes" class="view">
                 <div class="flex-between mb-3">
-                    <h2>Smart Document Store</h2>
-                    <button class="btn" onclick="app.createNewNote()"><i class="fas fa-plus"></i> New Note Frame</button>
+                    <h2>Smart Notes System</h2>
+                    <button class="btn" onclick="app.createNewNote()"><i class="fas fa-plus"></i> Add Entry</button>
                 </div>
                 <div class="notes-layout">
                     <div class="notes-list" id="notes-list-container"></div>
                     <div class="notes-editor">
-                        <input type="text" id="note-title" placeholder="Concept Header (e.g., Article 356 Parameters)">
-                        <textarea id="note-content" placeholder="Compile text markers here. Press Save Note below to securely commit elements to operational memory storage."></textarea>
+                        <input type="text" id="note-title" placeholder="Topic Heading...">
+                        <textarea id="note-content" placeholder="Compile historical insights, parameters, or updates here..."></textarea>
                         <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-                            <button class="btn-outline" style="color:var(--danger);" onclick="app.deleteCurrentNote()"><i class="fas fa-trash"></i> Delete</button>
-                            <button class="btn" onclick="app.saveNote()"><i class="fas fa-save"></i> Commit Notes</button>
+                            <button class="btn-outline" style="color:var(--danger);" onclick="app.deleteCurrentNote()"><i class="fas fa-trash"></i> Wipe</button>
+                            <button class="btn" onclick="app.saveNote()"><i class="fas fa-save"></i> Save Note</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="interview" class="view">
-                <h2>Voice-Driven Mock Interview Lab</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Speak directly with the virtual UPSC Panel using your microphone. Experience realistic, interactive interview coaching with automated text-to-speech rendering.</p>
+                <h2>Interactive Mock Interview Board</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Practice articulation skills using optimized panel structural questions.</p>
                 
-                <div class="card ai-gradient-border text-center" style="padding: 35px; text-align: center;">
-                    <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(139, 92, 246, 0.1); display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; color: var(--ai-glow); font-size: 28px;" id="mic-icon-container" class="">
+                <div class="card text-center" style="padding: 35px; text-align: center; border: 1px solid var(--border);">
+                    <div id="mic-icon-container" style="width: 65px; height: 65px; border-radius: 50%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; color: var(--primary); font-size: 24px;">
                         <i class="fas fa-microphone" id="mic-status-icon"></i>
                     </div>
-                    <h3 id="panelist-title">UPSC Panel Chair</h3>
-                    <p id="interview-question-display" style="font-size: 18px; font-weight: 600; max-width: 700px; margin: 15px auto; line-height: 1.5; color: var(--text-main);">
-                        Click "Initialize Board" below to begin your mock session.
+                    <h3 id="panelist-title">UPSC Mock Panel Desk</h3>
+                    
+                    <p id="interview-question-display" style="font-size: 16px; font-weight: 600; max-width: 650px; margin: 15px auto; line-height: 1.5;">
+                        Click "Begin Board Session" below to initialize the question matrix.
                     </p>
                     
-                    <div style="background: var(--bg-main); padding: 12px; border-radius: 8px; font-size: 14px; max-width: 600px; margin: 15px auto; min-height: 40px; color: var(--text-muted);" id="voice-transcript-box">
-                        <em>Your spoken answers will transcribe here in real-time...</em>
+                    <div id="interview-ai-transcript" class="ai-feature-container" style="background: var(--bg-main); padding: 12px; border-radius: 8px; font-size: 13px; max-width: 600px; margin: 15px auto; min-height: 40px; color: var(--text-muted);">
+                        <em>[AI Voice Channel Active] Spoken audio streaming translates here directly...</em>
                     </div>
 
-                    <div style="display: flex; justify-content: center; gap:10px;">
-                        <button class="btn btn-ai pulse" id="btn-start-session" onclick="aiEngine.startInterviewSession()">Initialize Board Session</button>
-                        <button class="btn" style="background:#10b981;" id="btn-mic-toggle" onclick="aiEngine.toggleSpeechRecording()" disabled><i class="fas fa-play"></i> Start Speaking</button>
-                        <button class="btn-outline" onclick="aiEngine.nextInterviewQuestion()">Skip Question</button>
+                    <div style="display: flex; justify-content: center; gap:10px; flex-wrap: wrap;">
+                        <button class="btn" id="btn-start-session" onclick="aiEngine.startInterviewSession()">Begin Board Session</button>
+                        <button class="btn btn-outline ai-feature-container" id="btn-mic-toggle" onclick="aiEngine.toggleSpeechRecording()" disabled><i class="fas fa-play"></i> Turn Mic ON</button>
+                        <button class="btn-outline" onclick="aiEngine.nextInterviewQuestion()">Skip to Next Question</button>
                     </div>
                 </div>
             </div>
@@ -302,7 +314,7 @@
     </main>
 
     <script>
-        // --- CENTRAL ENGINE SEED DATA ---
+        // --- DATA STORE POOL ---
         const questionBank = [
             {
                 id: 1, subject: 'Polity', difficulty: 'Core',
@@ -310,41 +322,31 @@
                 options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
                 correctIndex: 0,
                 explanation: "The 42nd Constitutional Amendment Act of 1976 curtailed judicial review capabilities significantly. Conversely, Article 32 rights can be suspended explicitly during an active Operational Emergency declaration under Article 359.",
-                tags: ["Judicial Review", "Article 32", "Amendments"]
+                tags: ["Judicial Review", "Article 32"]
             },
             {
                 id: 2, subject: 'Economy', difficulty: 'Advanced',
                 question: "If the Reserve Bank of India adopts an expansionary monetary posture, which actions should it explicitly avoid?",
-                options: [
-                    "Decreasing the Marginal Standing Facility Rate",
-                    "Increasing the Statutory Liquidity Ratio (SLR)",
-                    "Purchasing Government Securities via Open Market Operations",
-                    "Lowering the Repo Rate architecture"
-                ],
+                options: ["Decreasing the MSF Rate", "Increasing the Statutory Liquidity Ratio (SLR)", "Purchasing Securities via OMO", "Lowering the Repo Rate"],
                 correctIndex: 1,
                 explanation: "An expansionary stance attempts to boost market liquidity. Increasing the SLR locks up commercial banking capital, restricting market liquidity. This runs contrary to expansionary objectives.",
-                tags: ["Monetary Policy", "SLR", "Liquidity Engines"]
+                tags: ["Monetary Policy", "SLR"]
             },
             {
                 id: 3, subject: 'History', difficulty: 'Moderate',
                 question: "The historic Lucknow Pact of 1916 primarily achieved reconciliation between which critical factions?",
-                options: [
-                    "The Moderates and the Extremists only",
-                    "The Indian National Congress and the All-India Muslim League",
-                    "The Swarajists and the No-Changers Faction",
-                    "British Administration and Indian Princely Delegates"
-                ],
+                options: ["Moderates and Extremists only", "Indian National Congress and All-India Muslim League", "Swarajists and No-Changers", "British Administration and Princely Delegates"],
                 correctIndex: 1,
                 explanation: "The Lucknow Pact of 1916 marked a milestone joint platform alliance linking the Indian National Congress and the All-India Muslim League, alongside resolving Moderate-Extremist structural differences.",
-                tags: ["Modern History", "Lucknow Pact", "INC"]
+                tags: ["Modern History", "Lucknow Pact"]
             },
             {
                 id: 4, subject: 'CSAT', difficulty: 'Quantitative',
                 question: "A capital asset appreciates by 20% during year one, and subsequently decreases asset valuation by 10% in year two. Compute the net compounded structural yield shift over the complete cycle:",
                 options: ["10% Net Increase", "8% Net Increase", "12% Net Increase", "5% Net Decrease"],
                 correctIndex: 1,
-                explanation: "Step-by-Step Logic:\n1. Base Valuation = 100\n2. Year 1 Yield Update (+20%) = 120\n3. Year 2 Yield Correction (-10% of 120) = 120 - 12 = 108\n4. Compounded net variance shift = 108 - 100 = 8% positive yield variance.",
-                tags: ["Compounding", "Aptitude Engine"]
+                explanation: "Base Valuation = 100. Year 1 (+20%) = 120. Year 2 Correction (-10% of 120) = 120 - 12 = 108. Net change = 108 - 100 = 8% net increase.",
+                tags: ["Compounding", "Aptitude"]
             }
         ];
 
@@ -354,35 +356,64 @@
             "An executive order challenges fundamental environmental protocols for an important industrial development. As the supervising IAS authority, how do you manage legal protocols alongside immediate development goals?"
         ];
 
-        // --- CORE PLATFORM ENGINE STATE ---
+        // --- PLATFORM CORE ARCHITECTURE STATE ---
         const app = {
             currentTheme: localStorage.getItem('theme') || 'light',
+            aiModeActive: localStorage.getItem('ai_mode_active') !== 'false', // Default to true or last saved choice
             currentSubjectFilter: 'All',
             currentQuestion: null,
             questionAnswered: false,
-            stats: JSON.parse(localStorage.getItem('upsc_stats_v2')) || {
-                streak: 7, solved: 48, correct: 39,
-                subjectPerformance: { Polity: 82, Economy: 64, History: 72, CSAT: 55 }
+            
+            stats: JSON.parse(localStorage.getItem('upsc_stats_v3')) || {
+                streak: 8, solved: 64, correct: 51,
+                subjectPerformance: { Polity: 80, Economy: 65, History: 70, CSAT: 60 }
             },
-            notes: JSON.parse(localStorage.getItem('upsc_notes_v2')) || [
-                { id: 1, title: "Sarkaria Commission Guidelines", content: "Core structural notes on Article 356 usage. Governor should explore alternative coalition configurations before reporting breakdown.", date: new Date().toISOString() }
+            notes: JSON.parse(localStorage.getItem('upsc_notes_v3')) || [
+                { id: 1, title: "Sarkaria Commission Insight", content: "Core structural notes on Article 356 usage. Governor should explore alternative options before reporting system breakdown.", date: new Date().toISOString() }
             ],
             currentNoteId: null,
 
             init: function() {
                 if(this.currentTheme === 'dark') document.body.classList.add('dark-mode');
                 this.updateThemeIcon();
+                this.applyAIModeUI();
                 this.renderDashboard();
                 this.renderNotesList();
-                aiEngine.generatePerformanceInsight();
                 this.renderTargets();
+            },
+
+            // --- AI CONTROLLER TOGGLE FUNCTIONALITY ---
+            toggleAIMode: function() {
+                this.aiModeActive = !this.aiModeActive;
+                localStorage.setItem('ai_mode_active', this.aiModeActive);
+                this.applyAIModeUI();
+            },
+
+            applyAIModeUI: function() {
+                const btn = document.getElementById('mode-toggle-btn');
+                const text = document.getElementById('mode-status-text');
+                const aiFeatures = document.querySelectorAll('.ai-feature-container');
+                const normalChecklist = document.getElementById('mains-normal-checklist');
+
+                if(this.aiModeActive) {
+                    btn.classList.add('ai-active');
+                    text.innerText = "AI Mode: Enabled";
+                    aiFeatures.forEach(el => el.classList.remove('hidden-mode'));
+                    if(normalChecklist) normalChecklist.classList.add('hidden');
+                    aiEngine.generatePerformanceInsight();
+                } else {
+                    btn.classList.remove('ai-active');
+                    text.innerText = "Normal Mode Active";
+                    aiFeatures.forEach(el => el.classList.add('hidden-mode'));
+                    if(normalChecklist) normalChecklist.classList.remove('hidden');
+                }
             },
 
             switchView: function(viewId) {
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 if(event) event.currentTarget.classList.add('active');
                 
-                document.getElementById('page-title').innerText = viewId.toUpperCase() + " CONTROL MODULE";
+                document.getElementById('page-title').innerText = viewId.toUpperCase() + " SYSTEM CONTROLLER";
                 document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
                 document.getElementById(viewId).classList.add('active');
 
@@ -404,8 +435,8 @@
 
             renderDashboard: function() {
                 document.getElementById('streak-display').innerText = this.stats.streak + ' Days Active';
-                document.getElementById('solved-display').innerText = this.stats.solved + ' MCQs';
-                const acc = this.stats.solved > 0 ? Math.round((this.stats.correct / this.stats.solved) * 100) : 78;
+                document.getElementById('solved-display').innerText = this.stats.solved + ' Solved';
+                const acc = this.stats.solved > 0 ? Math.round((this.stats.correct / this.stats.solved) * 100) : 75;
                 document.getElementById('accuracy-display').innerText = acc + '%';
                 this.renderChart();
             },
@@ -413,9 +444,9 @@
             renderTargets: function() {
                 const list = document.getElementById('target-list');
                 const tasks = [
-                    "Analyze standard macro economy policy sheets",
-                    "Solve 10 multi-statement environment matrix problems",
-                    "Complete draft essay block inside the evaluation desk"
+                    "Evaluate statutory provisions concerning federal distribution setups",
+                    "Solve 15 target conceptual history database problems",
+                    "Update structural definitions inside operational data stores"
                 ];
                 list.innerHTML = tasks.map(t => `<label style="display:flex; gap:10px; align-items:center; font-size:14px;"><input type="checkbox" style="accent-color:var(--primary);"> ${t}</label>`).join('');
             },
@@ -424,21 +455,33 @@
                 const ctx = document.getElementById('performanceChart');
                 if(!ctx) return;
                 if(window.myChart) window.myChart.destroy();
-                const textCol = this.currentTheme === 'dark' ? '#cbd5e1' : '#64748b';
+                
+                // FIXED: Safe hex colors string instead of direct CSS variables parsing code crash bug
+                const lineCol = this.currentTheme === 'dark' ? '#374151' : '#e5e7eb';
+                const labelCol = this.currentTheme === 'dark' ? '#cbd5e1' : '#64748b';
+                
                 window.myChart = new Chart(ctx, {
                     type: 'radar',
                     data: {
                         labels: Object.keys(this.stats.subjectPerformance),
                         datasets: [{
                             data: Object.values(this.stats.subjectPerformance),
-                            backgroundColor: 'rgba(139, 92, 246, 0.15)',
+                            backgroundColor: 'rgba(139, 92, 246, 0.12)',
                             borderColor: '#8b5cf6',
                             borderWidth: 2,
                             pointBackgroundColor: '#7c3aed'
                         }]
                     },
                     options: {
-                        scales: { r: { grid: { color: var(--border) }, angleLines: { color: textCol }, pointLabels: { color: textCol }, suggestedMin: 20, suggestedMax: 100 } },
+                        scales: { 
+                            r: { 
+                                grid: { color: lineCol }, 
+                                angleLines: { color: lineCol }, 
+                                pointLabels: { color: labelCol }, 
+                                suggestedMin: 10, 
+                                suggestedMax: 100 
+                            } 
+                        },
                         plugins: { legend: { display: false } }
                     }
                 });
@@ -457,7 +500,7 @@
                 this.currentQuestion = q;
                 this.questionAnswered = false;
 
-                document.getElementById('q-metadata').innerText = `${q.subject.toUpperCase()} // METRIC ID: 00${q.id} // LEVEL: ${q.difficulty}`;
+                document.getElementById('q-metadata').innerText = `${q.subject.toUpperCase()} // MATRIC LEVEL ENTRY // ENGINE CODE: 0${q.id}`;
                 document.getElementById('q-text').innerText = q.question;
                 document.getElementById('q-explanation').classList.add('hidden');
                 
@@ -490,12 +533,12 @@
                 this.stats.solved++;
                 if(correct) {
                     this.stats.correct++;
-                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.min(100, this.stats.subjectPerformance[this.currentQuestion.subject] + 4);
+                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.min(100, this.stats.subjectPerformance[this.currentQuestion.subject] + 5);
                 } else {
-                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.max(20, this.stats.subjectPerformance[this.currentQuestion.subject] - 3);
+                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.max(20, this.stats.subjectPerformance[this.currentQuestion.subject] - 4);
                 }
                 
-                localStorage.setItem('upsc_stats_v2', JSON.stringify(this.stats));
+                localStorage.setItem('upsc_stats_v3', JSON.stringify(this.stats));
                 this.renderDashboard();
 
                 document.getElementById('exp-text').innerText = this.currentQuestion.explanation;
@@ -506,7 +549,7 @@
                 const container = document.getElementById('notes-list-container');
                 container.innerHTML = this.notes.map(n => `
                     <div class="note-item ${this.currentNoteId === n.id ? 'active' : ''}" onclick="app.loadNote(${n.id})">
-                        <strong>${n.title || 'Untitled Structure'}</strong>
+                        <strong>${n.title || 'Blank Header Frame'}</strong>
                         <div style="font-size:11px; margin-top:3px; color:var(--text-muted);">${new Date(n.date).toLocaleDateString()}</div>
                     </div>
                 `).join('');
@@ -528,7 +571,7 @@
             },
 
             saveNote: function() {
-                const t = document.getElementById('note-title').value || "Quick Note Module";
+                const t = document.getElementById('note-title').value || "Manual Archive Entry";
                 const c = document.getElementById('note-content').value;
                 if(!c) return;
 
@@ -540,30 +583,30 @@
                     this.notes.push(newN);
                     this.currentNoteId = newN.id;
                 }
-                localStorage.setItem('upsc_notes_v2', JSON.stringify(this.notes));
+                localStorage.setItem('upsc_notes_v3', JSON.stringify(this.notes));
                 this.renderNotesList();
             },
 
             deleteCurrentNote: function() {
                 if(!this.currentNoteId) return;
                 this.notes = this.notes.filter(n => n.id !== this.currentNoteId);
-                localStorage.setItem('upsc_notes_v2', JSON.stringify(this.notes));
+                localStorage.setItem('upsc_notes_v3', JSON.stringify(this.notes));
                 this.createNewNote();
             }
         };
 
-        // --- ADVANCED FAST-RESPONSE CLIENT-SIDE AI ENGINE ---
+        // --- FAST RESPONSIVE DYNAMIC AI INSTANT RECOGNITION SYSTEM ---
         const aiEngine = {
             recognition: null,
             isRecording: false,
             currentInterviewIndex: 0,
 
             generatePerformanceInsight: function() {
+                if(!app.aiModeActive) return;
                 const lowSubject = Object.keys(app.stats.subjectPerformance).reduce((a, b) => app.stats.subjectPerformance[a] < app.stats.subjectPerformance[b] ? a : b);
                 const score = app.stats.subjectPerformance[lowSubject];
                 document.getElementById('ai-insight-text').innerHTML = `
-                    <i class="fas fa-bolt" style="color:var(--warning)"></i> <strong>Automated Vector Analysis:</strong> Your conceptual matrix indicates a standard vulnerability pattern in <strong>${lowSubject}</strong> (Current Score: ${score}%). 
-                    To fix this discrepancy, revise your notes containing historical context or structural adjustments immediately. Core accuracy vectors show clean performance in other tracks.
+                    <i class="fas fa-bolt" style="color:var(--warning)"></i> <strong>Active AI Diagnostics Matrix:</strong> Conceptual performance tracking flags a priority revision bottleneck in <strong>${lowSubject}</strong> (Score vector: ${score}%). Focus study targets around these structural points to optimize global accuracy profile vectors.
                 `;
             },
 
@@ -576,55 +619,47 @@
                 chatOut.innerHTML += `<div class="chat-bubble user">${text}</div>`;
                 inputEl.value = '';
 
-                // Instant semantic response generation rule mapping
                 setTimeout(() => {
-                    let aiReply = "Concept query parsed. Under standard UPSC regulatory guidelines, this point interfaces directly with structural administrative accountability, verifying constitutional safety boundaries. Keep revisions focused on core operational frameworks.";
+                    let aiReply = "Dynamic topic analysis loaded. Inside civil services documentation protocols, this concept forms the core accountability metrics defining federal integration systems.";
+                    if(text.toLowerCase().includes('article')) aiReply = "Constitutional Article vector recognized. Correlate this parameter explicitly with major Supreme Court milestones to secure maximum evaluation output points.";
+                    if(text.toLowerCase().includes('slr') || text.toLowerCase().includes('rate')) aiReply = "Macroeconomic liquidity directive identified. Tightening or easing infrastructure reserves alters commercial market liquidity thresholds directly.";
                     
-                    if(text.toLowerCase().includes('article')) aiReply = "Article parameters identified! In the UPSC framework, analyze matching case laws (e.g., K.S. Puttaswamy for Article 21, or S.R. Bommai for Article 356) to secure optimal dynamic scoring values in Mains arguments.";
-                    if(text.toLowerCase().includes('slr') || text.toLowerCase().includes('inflation')) aiReply = "Macroeconomic liquidity rule triggered. Remember: Adjusting structural banking baselines impacts loan availability vectors directly, balancing expansion targets against consumer inflation indexes.";
-                    
-                    chatOut.innerHTML += `<div class="chat-bubble ai"><strong>AI System Response:</strong> ${aiReply}</div>`;
+                    chatOut.innerHTML += `<div class="chat-bubble ai"><strong>AI System response:</strong> ${aiReply}</div>`;
                     chatOut.scrollTop = chatOut.scrollHeight;
-                }, 150);
+                }, 120);
             },
 
             evaluateMainsAnswer: function() {
                 const val = document.getElementById('mains-answer-input').value.trim();
-                if(val.length < 30) return alert("Please present an optimized sample answer architecture for proper data analysis.");
+                if(val.length < 25) return alert("Write down a structured sample reply to accurately compute metrics.");
 
                 const report = document.getElementById('mains-ai-report');
                 report.classList.remove('hidden');
 
-                // Structural semantic analyzer algorithms running natively
                 const hasIntro = val.toLowerCase().includes('governor') || val.toLowerCase().includes('article');
                 const hasCitations = val.match(/article\s\d+|constitution|judgment/gi);
-                const hasConclusion = val.toLowerCase().includes('way forward') || val.toLowerCase().includes('conclusion') || val.toLowerCase().includes('therefore');
 
-                const s1 = hasIntro && hasConclusion ? 8 : 4;
-                const s2 = hasCitations ? Math.min(10, 3 + hasCitations.length * 2) : 3;
-                const s3 = val.length > 300 ? 9 : 6;
+                const s1 = hasIntro ? 8 : 4;
+                const s2 = hasCitations ? Math.min(10, 4 + hasCitations.length * 2) : 3;
 
                 document.getElementById('score-structure').innerText = `${s1}/10`;
                 document.getElementById('score-citations').innerText = `${s2}/10`;
-                document.getElementById('score-critical').innerText = `${s3}/10`;
 
                 document.getElementById('bar-structure').style.width = `${s1*10}%`;
                 document.getElementById('bar-citations').style.width = `${s2*10}%`;
-                document.getElementById('bar-critical').style.width = `${s3*10}%`;
 
                 document.getElementById('mains-ai-critique').innerHTML = `
-                    Structural parameters checked. ${hasCitations ? 'Clean historical validation framework.' : 'Missing target constitutional provisions. Interject explicit references like Article 154 or 163 to reinforce reliability.'} Ensure structural points directly contrast both balancing positions.
+                    ${hasCitations ? 'Clean reference anchoring found.' : 'Missing explicit constitutional provisions. Connect target clauses (e.g. Article 163/154 parameters) to scale content validation metrics.'}
                 `;
             },
 
-            // SPEECH RECOGNITION AND AUDIO IMPLEMENTATION
             startInterviewSession: function() {
                 this.currentInterviewIndex = 0;
-                document.getElementById('btn-mic-toggle').removeAttribute('disabled');
-                document.getElementById('btn-start-session').innerText = "Session Active";
+                const micBtn = document.getElementById('btn-mic-toggle');
+                if(micBtn) micBtn.removeAttribute('disabled');
+                document.getElementById('btn-start-session').innerText = "Session Live";
                 this.presentInterviewQuestion();
                 
-                // Initialize Web Speech API if accessible
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if(SpeechRecognition) {
                     this.recognition = new SpeechRecognition();
@@ -647,17 +682,17 @@
                 const question = interviewQuestions[this.currentInterviewIndex];
                 document.getElementById('interview-question-display').innerText = question;
                 
-                // Audio synthesis triggering clear speech execution
-                if('speechSynthesis' in window) {
+                // Voice synthesis features trigger only during active AI Mode parameters
+                if(app.aiModeActive && 'speechSynthesis' in window) {
                     window.speechSynthesis.cancel();
                     const utterance = new SpeechSynthesisUtterance(question);
-                    utterance.rate = 0.95;
+                    utterance.rate = 0.98;
                     window.speechSynthesis.speak(utterance);
                 }
             },
 
             toggleSpeechRecording: function() {
-                if(!this.recognition) return alert("Voice speech recognition interfaces are unavailable or restricted on this browser architecture.");
+                if(!this.recognition) return alert("Microphone engine speech synthesis models missing or access blocked on this device profile.");
                 
                 const micBox = document.getElementById('mic-icon-container');
                 const btn = document.getElementById('btn-mic-toggle');
@@ -668,27 +703,25 @@
                     micBox.classList.add('pulse');
                     micBox.style.background = 'rgba(239, 68, 68, 0.1)';
                     micBox.style.color = 'var(--danger)';
-                    btn.innerHTML = `<i class="fas fa-stop"></i> Finalize Answer`;
+                    btn.innerHTML = `<i class="fas fa-stop"></i> Sync Answer Data`;
                 } else {
                     this.recognition.stop();
                     this.isRecording = false;
                     micBox.classList.remove('pulse');
-                    micBox.style.background = 'rgba(139, 92, 246, 0.1)';
-                    micBox.style.color = 'var(--ai-glow)';
-                    btn.innerHTML = `<i class="fas fa-play"></i> Start Speaking`;
+                    micBox.style.background = 'var(--bg-main)';
+                    micBox.style.color = 'var(--primary)';
+                    btn.innerHTML = `<i class="fas fa-play"></i> Turn Mic ON`;
                     
-                    // Trigger simulated panel feedback analysis sequence
                     setTimeout(() => {
-                        alert("Response submitted to board matrix. Progressing to the next technical target question framework.");
+                        alert("Speech audio frames committed. Transitioning parameters to next board issue.");
                         this.nextInterviewQuestion();
-                    }, 800);
+                    }, 600);
                 }
             },
 
             nextInterviewQuestion: function() {
                 this.currentInterviewIndex = (this.currentInterviewIndex + 1) % interviewQuestions.length;
                 this.presentInterviewQuestion();
-                document.getElementById('voice-transcript-box').innerHTML = `<em>Listening window cleaned. Click Start Speaking to record your reply...</em>`;
             }
         };
 
