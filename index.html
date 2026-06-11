@@ -3,728 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Prep Pro | Hybrid AI-Normal Learning Portal</title>
+    <title>UPSC Master Portal</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- THEME & VARIABLES --- */
+        /* --- CORE VARIABLES --- */
         :root {
-            --primary: #1e40af; 
-            --primary-light: #3b82f6;
-            --primary-dark: #1e3a8a;
-            --bg-main: #f3f4f6;
-            --bg-surface: #ffffff;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --ai-glow: #8b5cf6;
-            --sidebar-width: 260px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --transition: all 0.25s ease;
+            --bg-body: #f4f7f6;
+            --bg-card: #ffffff;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --primary: #2b6cb0;
+            --primary-hover: #2c5282;
+            --accent: #ed8936;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --border: #e2e8f0;
+            --sidebar-w: 250px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
-        .dark-mode {
-            --primary: #60a5fa;
-            --primary-light: #3b82f6;
-            --primary-dark: #93c5fd;
-            --bg-main: #111827;
-            --bg-surface: #1f2937;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border: #374151;
-            --ai-glow: #a78bfa;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        [data-theme="dark"] {
+            --bg-body: #1a202c;
+            --bg-card: #2d3748;
+            --text-main: #f7fafc;
+            --text-muted: #a0aec0;
+            --primary: #63b3ed;
+            --primary-hover: #4299e1;
+            --border: #4a5568;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
         }
 
-        /* --- GLOBAL RESET --- */
+        /* --- RESET & LAYOUT --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: var(--transition); }
-        button { cursor: pointer; border: none; outline: none; background: none; transition: var(--transition); }
-        input, textarea, select { font-family: inherit; }
-
-        /* --- LAYOUT --- */
-        #sidebar { width: var(--sidebar-width); background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
-        .logo { padding: 20px; font-size: 22px; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
-        .nav-links { flex: 1; padding: 20px 0; overflow-y: auto; }
-        .nav-item { padding: 12px 20px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); text-decoration: none; font-size: 15px; cursor: pointer; }
-        .nav-item:hover, .nav-item.active { background-color: rgba(59, 130, 246, 0.1); color: var(--primary); border-right: 3px solid var(--primary); }
-        .nav-item i { width: 20px; text-align: center; }
-
-        #main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #header { height: 70px; background-color: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .header-actions { display: flex; gap: 15px; align-items: center; }
+        body { background: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: background 0.3s; }
+        button { cursor: pointer; border: none; background: none; transition: 0.2s; }
         
-        #view-container { flex: 1; padding: 30px; overflow-y: auto; }
-        .view { display: none; animation: fadeIn 0.3s ease-out; }
+        /* --- SIDEBAR --- */
+        #sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; }
+        .logo { padding: 20px; font-size: 20px; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--border); letter-spacing: 1px; }
+        .nav-links { flex: 1; padding: 10px 0; overflow-y: auto; }
+        .nav-btn { width: 100%; text-align: left; padding: 15px 20px; color: var(--text-muted); font-size: 16px; display: flex; align-items: center; gap: 15px; }
+        .nav-btn:hover, .nav-btn.active { background: rgba(43, 108, 176, 0.1); color: var(--primary); border-right: 3px solid var(--primary); }
+        .nav-btn i { width: 20px; text-align: center; }
+
+        /* --- MAIN CONTENT --- */
+        #main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        #header { height: 70px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .theme-toggle { font-size: 20px; color: var(--text-main); padding: 10px; border-radius: 50%; }
+        .theme-toggle:hover { background: var(--bg-body); }
+        
+        #content-area { flex: 1; padding: 30px; overflow-y: auto; }
+        .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- COMPONENTS --- */
-        .card { background-color: var(--bg-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .stat-card { display: flex; align-items: center; gap: 15px; }
-        .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 20px; color: white; }
-        .stat-info h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px;}
-        .stat-info p { font-size: 22px; font-weight: bold; }
+        /* --- UI COMPONENTS --- */
+        .card { background: var(--bg-card); padding: 20px; border-radius: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .btn-primary { background: var(--primary); color: white; padding: 10px 20px; border-radius: 6px; font-weight: 600; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .badge { background: var(--accent); color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
 
-        .btn { background-color: var(--primary); color: white; padding: 10px 18px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
-        .btn:hover { background-color: var(--primary-dark); }
-        .btn-outline { border: 1px solid var(--border); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-outline:hover { background-color: var(--bg-main); border-color: var(--text-muted); }
+        /* --- PRELIMS ENGINE --- */
+        .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-tag { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 14px; }
+        .filter-tag.active { background: var(--primary); color: white; border-color: var(--primary); }
         
-        /* AI HYBRID MODES */
-        .btn-mode-switch { background: #e5e7eb; color: #374151; font-weight: bold; border: 1px solid var(--border); }
-        .btn-mode-switch.ai-active { background: linear-gradient(135deg, #7c3aed, #2563eb); color: white; border: none; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
-        .ai-feature-container { transition: all 0.3s ease; }
-        .ai-feature-container.hidden-mode { display: none !important; }
-
-        .ai-gradient-border { border: 1px solid transparent; background: linear-gradient(var(--bg-surface), var(--bg-surface)) padding-box, linear-gradient(135deg, #7c3aed, #3b82f6) border-box; }
-
-        /* --- PRACTICE FILTER TABS --- */
-        .subject-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-        .filter-btn { padding: 6px 14px; border-radius: 20px; background-color: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main); font-size: 14px; }
-        .filter-btn.active { background-color: var(--primary); color: white; border-color: var(--primary); }
+        .mcq-option { display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 10px; cursor: pointer; background: var(--bg-card); }
+        .mcq-option:hover:not(.locked) { border-color: var(--primary); background: rgba(43, 108, 176, 0.05); }
+        .mcq-option.correct { border-color: var(--success); background: rgba(56, 161, 105, 0.1); }
+        .mcq-option.wrong { border-color: var(--danger); background: rgba(229, 62, 62, 0.1); text-decoration: line-through; opacity: 0.8; }
+        .mcq-option.locked { cursor: default; }
         
-        .options-grid { display: grid; gap: 10px; margin-top: 15px; }
-        .option { padding: 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; background: var(--bg-surface); }
-        .option:hover:not(.disabled) { border-color: var(--primary-light); background-color: rgba(59, 130, 246, 0.02); }
-        .option.correct { border-color: var(--success); background-color: rgba(16, 185, 129, 0.08); color: var(--success); font-weight: 600; }
-        .option.wrong { border-color: var(--danger); background-color: rgba(239, 68, 68, 0.08); color: var(--danger); }
-        .option.disabled { cursor: not-allowed; }
-        .option-label { width: 26px; height: 26px; border-radius: 50%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; }
+        .explanation-box { margin-top: 20px; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary); background: var(--bg-body); display: none; }
+        .explanation-box.show { display: block; animation: fadeIn 0.4s; }
 
-        /* CHAT SYSTEMS */
-        .ai-chat-window { max-height: 200px; overflow-y: auto; padding: 10px; background: var(--bg-main); border-radius: 8px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-bubble { padding: 10px 14px; border-radius: 12px; max-width: 85%; font-size: 14px; line-height: 1.5; }
-        .chat-bubble.user { background-color: var(--primary); color: white; align-self: flex-end; }
-        .chat-bubble.ai { background-color: var(--bg-surface); color: var(--text-main); align-self: flex-start; border: 1px solid var(--border); }
-
-        /* --- NOTES STORAGE MANAGEMENT --- */
-        .notes-layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; height: calc(100vh - 170px); }
-        .notes-list { background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border); padding: 15px; overflow-y: auto; }
-        .note-item { padding: 10px; border-bottom: 1px solid var(--border); cursor: pointer; border-radius: 6px; margin-bottom: 5px; }
-        .note-item:hover, .note-item.active { background-color: var(--bg-main); }
-        .notes-editor { background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
-        .notes-editor input { font-size: 18px; font-weight: bold; border: none; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; background: transparent; color: var(--text-main); outline: none; }
-        .notes-editor textarea { flex: 1; border: none; resize: none; background: transparent; color: var(--text-main); font-size: 15px; line-height: 1.6; outline: none; }
-
-        /* UTILITIES */
+        /* --- UTILS --- */
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .mt-3 { margin-top: 0.75rem; }
-        .mb-3 { margin-bottom: 0.75rem; }
-        .hidden { display: none !important; }
-        .pulse { animation: pulseGlow 2s infinite; }
-        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
+        .text-muted { color: var(--text-muted); }
+        textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); resize: vertical; min-height: 150px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-body); color: var(--text-main); }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
     <nav id="sidebar">
-        <div class="logo"><i class="fas fa-graduation-cap"></i> UPSC Portal</div>
+        <div class="logo"><i class="fas fa-landmark"></i> UPSC Portal</div>
         <div class="nav-links">
-            <div class="nav-item active" onclick="app.switchView('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
-            <div class="nav-item" onclick="app.switchView('prelims')"><i class="fas fa-edit"></i> Prelims Practice</div>
-            <div class="nav-item" onclick="app.switchView('mains')"><i class="fas fa-pen-fancy"></i> Mains Workspace</div>
-            <div class="nav-item" onclick="app.switchView('notes')"><i class="fas fa-folder-open"></i> Smart Notes</div>
-            <div class="nav-item" onclick="app.switchView('interview')"><i class="fas fa-microphone-alt"></i> Interview Desk</div>
+            <button class="nav-btn active" onclick="app.navigate('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</button>
+            <button class="nav-btn" onclick="app.navigate('prelims')"><i class="fas fa-check-square"></i> Prelims MCQs</button>
+            <button class="nav-btn" onclick="app.navigate('mains')"><i class="fas fa-pen-nib"></i> Mains Hub</button>
+            <button class="nav-btn" onclick="app.navigate('notes')"><i class="fas fa-book"></i> Digital Notes</button>
+        </div>
+        <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border);">
+            System Architect: Abijith
         </div>
     </nav>
 
-    <main id="main-content">
+    <main id="main-wrapper">
         <header id="header">
-            <h2 id="page-title" style="font-size: 18px; font-weight: 600;">Dashboard</h2>
-            <div class="header-actions">
-                <button id="mode-toggle-btn" class="btn-outline btn-mode-switch ai-active" onclick="app.toggleAIMode()">
-                    <i class="fas fa-robot"></i> <span id="mode-status-text">AI Mode: Enabled</span>
-                </button>
-                <button onclick="app.toggleTheme()" style="color: var(--text-main); font-size: 18px; padding: 5px;"><i class="fas fa-moon" id="theme-icon"></i></button>
+            <h2 id="page-title" style="font-size: 18px;">Overview Dashboard</h2>
+            <div class="flex-between" style="gap: 20px;">
+                <div style="text-align: right;">
+                    <div style="font-size: 12px; color: var(--text-muted); font-weight: bold;">UPSC PRELIMS COUNTDOWN</div>
+                    <div id="countdown" style="font-size: 16px; font-weight: 800; color: var(--danger);">Loading...</div>
+                </div>
+                <button class="theme-toggle" onclick="app.toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button>
             </div>
         </header>
 
-        <div id="view-container">
+        <div id="content-area">
             
             <div id="dashboard" class="view active">
-                <div class="grid-cards">
-                    <div class="card stat-card">
-                        <div class="stat-icon" style="background: #3b82f6;"><i class="fas fa-fire"></i></div>
-                        <div class="stat-info"><h3>Daily Streak</h3><p id="streak-display">--</p></div>
+                <div class="grid-3">
+                    <div class="card">
+                        <h4 class="text-muted"><i class="fas fa-bullseye"></i> Daily Target</h4>
+                        <div style="font-size: 24px; font-weight: bold; margin: 10px 0;" id="daily-target">Solve 50 MCQs</div>
+                        <progress id="target-progress" value="0" max="50" style="width: 100%; height: 8px;"></progress>
                     </div>
-                    <div class="card stat-card">
-                        <div class="stat-icon" style="background: #10b981;"><i class="fas fa-bullseye"></i></div>
-                        <div class="stat-info"><h3>Global Accuracy</h3><p id="accuracy-display">--</p></div>
+                    <div class="card">
+                        <h4 class="text-muted"><i class="fas fa-check-circle"></i> Accuracy Rate</h4>
+                        <div style="font-size: 28px; font-weight: bold; margin-top: 10px; color: var(--success);" id="global-accuracy">0%</div>
                     </div>
-                    <div class="card stat-card">
-                        <div class="stat-icon" style="background: #8b5cf6;"><i class="fas fa-database"></i></div>
-                        <div class="stat-info"><h3>Solved Count</h3><p id="solved-display">--</p></div>
+                    <div class="card">
+                        <h4 class="text-muted"><i class="fas fa-database"></i> Total Solved</h4>
+                        <div style="font-size: 28px; font-weight: bold; margin-top: 10px; color: var(--primary);" id="total-solved">0</div>
                     </div>
                 </div>
 
-                <div id="dashboard-ai-card" class="card ai-gradient-border ai-feature-container">
-                    <div class="flex-between">
-                        <h3 style="color: var(--ai-glow); font-size: 16px;"><i class="fas fa-brain"></i> AI Performance Telemetry Diagnostic</h3>
-                        <button class="btn" style="background: var(--ai-glow); padding: 4px 10px; font-size: 12px;" onclick="aiEngine.generatePerformanceInsight()">Recalculate</button>
-                    </div>
-                    <p id="ai-insight-text" style="margin-top: 10px; font-size: 14px; line-height: 1.6;"></p>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
-                    <div class="card">
-                        <h3>Subject Proficiency Vector</h3>
-                        <canvas id="performanceChart" height="180"></canvas>
-                    </div>
-                    <div class="card">
-                        <h3>Standard Preparation Targets</h3>
-                        <div style="display:flex; flex-direction:column; gap:12px; margin-top:15px;" id="target-list"></div>
-                    </div>
+                <div class="card" style="max-width: 800px;">
+                    <h3>Subject Mastery Analytics</h3>
+                    <canvas id="analyticsChart" height="100"></canvas>
                 </div>
             </div>
 
             <div id="prelims" class="view">
-                <div class="flex-between mb-3">
-                    <h2>Smart Practice Matrix</h2>
-                    <button class="btn" onclick="app.loadNextQuestion()">Next Question <i class="fas fa-chevron-right"></i></button>
+                <div class="flex-between" style="margin-bottom: 20px;">
+                    <h2>Prelims Simulator</h2>
+                    <button class="btn-primary" onclick="mcqEngine.loadNext()"><i class="fas fa-forward"></i> Next Question</button>
                 </div>
-                <div class="subject-filters">
-                    <button class="filter-btn active" onclick="app.setSubject('All')">Mixed Bag</button>
-                    <button class="filter-btn" onclick="app.setSubject('Polity')">Polity</button>
-                    <button class="filter-btn" onclick="app.setSubject('History')">History</button>
-                    <button class="filter-btn" onclick="app.setSubject('Economy')">Economy</button>
-                    <button class="filter-btn" onclick="app.setSubject('CSAT')">CSAT</button>
+                
+                <div class="filter-row" id="subject-filters">
+                    <button class="filter-tag active" onclick="mcqEngine.setFilter('All')">Mixed Set</button>
+                    <button class="filter-tag" onclick="mcqEngine.setFilter('History')">History</button>
+                    <button class="filter-tag" onclick="mcqEngine.setFilter('Polity')">Polity</button>
+                    <button class="filter-tag" onclick="mcqEngine.setFilter('Geography')">Geography</button>
+                    <button class="filter-tag" onclick="mcqEngine.setFilter('Economy')">Economy</button>
                 </div>
 
                 <div class="card">
-                    <div style="color: var(--text-muted); font-size:12px; font-weight:600;" id="q-metadata">LOADING...</div>
-                    <div id="q-text" style="font-size: 16px; font-weight:600; margin-top:10px; line-height:1.5;"></div>
-                    <div class="options-grid" id="q-options"></div>
-                    
-                    <div class="card mt-3 hidden" id="q-explanation" style="border-left: 4px solid var(--success); background: rgba(16, 185, 129, 0.01);">
-                        <h4 style="color: var(--success); font-size:14px;"><i class="fas fa-check-circle"></i> Solution Analysis</h4>
-                        <p id="exp-text" style="font-size: 14px; margin-top:5px; line-height:1.5;"></p>
+                    <div class="flex-between">
+                        <span class="badge" id="q-subject">Subject</span>
+                        <span class="text-muted" style="font-size: 14px;" id="q-id">#ID</span>
                     </div>
+                    <h3 style="margin: 20px 0; line-height: 1.6;" id="q-text">Question text loads here...</h3>
+                    
+                    <div id="q-options-container">
+                        </div>
 
-                    <div id="prelims-ai-chat" class="card ai-gradient-border mt-3 ai-feature-container">
-                        <h4 style="color: var(--ai-glow); font-size:14px;"><i class="fas fa-comment-dots"></i> 1-Click AI Instant Inquiry Desk</h4>
-                        <div class="ai-chat-window" id="ai-chat-output">
-                            <div class="chat-bubble ai">Hello! Ask me any structural questions regarding this topic. Responses generate instantly under active AI Mode.</div>
-                        </div>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <input type="text" id="ai-chat-input" placeholder="Type your dynamic doubt here..." style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main);">
-                            <button class="btn" style="background:var(--ai-glow);" onclick="aiEngine.askDoubt()">Query AI</button>
-                        </div>
+                    <div id="q-explanation" class="explanation-box">
+                        <h4 style="color: var(--primary); margin-bottom: 10px;"><i class="fas fa-lightbulb"></i> Detailed Analysis</h4>
+                        <div id="exp-content" style="line-height: 1.6;"></div>
                     </div>
                 </div>
             </div>
 
             <div id="mains" class="view">
-                <h2>Mains Answer Testing Terminal</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Draft comprehensive analytical solutions matching UPSC grading metrics.</p>
+                <h2>Mains Workspace</h2>
+                <p class="text-muted" style="margin-bottom: 20px;">Draft, save, and review your subjective answers.</p>
                 
-                <div style="display:grid; grid-template-columns: 1fr 320px; gap:20px; flex-wrap: wrap;">
+                <div class="grid-3">
+                    <div class="card" style="grid-column: span 2;">
+                        <h3>Today's Practice Prompt (GS Paper II)</h3>
+                        <p style="font-weight: 600; margin: 15px 0;">"Discuss the role of the Election Commission of India in light of the evolution of the Model Code of Conduct."</p>
+                        <textarea placeholder="Start writing your structured answer here (Introduction, Body, Conclusion)..." id="mains-draft"></textarea>
+                        <button class="btn-primary" style="margin-top: 15px;" onclick="alert('Draft saved to LocalStorage!')"><i class="fas fa-save"></i> Save Draft</button>
+                    </div>
                     <div class="card">
-                        <div class="flex-between mb-3">
-                            <span style="font-weight:600; font-size:14px; color:var(--primary)">GS Paper II - Polity Frictions</span>
-                            <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding:3px 8px; border-radius:4px; font-size:12px; font-weight:600;">15 Marks</span>
-                        </div>
-                        <h3 style="font-size: 16px; line-height: 1.5; margin-bottom:15px;">"The office of the Governor is not a decorative emblem but an active functional component of federal architecture." Critically evaluate in light of recent structural friction points.</h3>
-                        <textarea id="mains-answer-input" placeholder="Type your multi-paragraph solution here..." style="width:100%; height:250px; padding:15px; border-radius:8px; border:1px solid var(--border); background: var(--bg-main); color: var(--text-main); line-height:1.6; resize:none;"></textarea>
-                        
-                        <div class="mt-3" style="display:flex; gap:10px;">
-                            <button class="btn" style="background: var(--success);" onclick="alert('Response committed to local database storage profile.')"><i class="fas fa-save"></i> Save Draft</button>
-                            <button id="mains-ai-btn" class="btn ai-feature-container" style="background: var(--ai-glow);" onclick="aiEngine.evaluateMainsAnswer()"><i class="fas fa-microchip"></i> Run Structural AI Evaluation</button>
-                        </div>
-                    </div>
-
-                    <div id="mains-ai-report" class="card ai-gradient-border ai-feature-container">
-                        <h4><i class="fas fa-file-invoice"></i> AI Diagnostic Matrix</h4>
-                        <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
-                            <div>
-                                <div class="flex-between"><span style="font-size:13px;">Format & Layout Flow</span><strong id="score-structure">0/10</strong></div>
-                                <div style="height:6px; background:var(--bg-main); border-radius:3px; margin-top:4px;"><div id="bar-structure" style="height:100%; width:0%; background:var(--ai-glow); border-radius:3px; transition: var(--transition);"></div></div>
-                            </div>
-                            <div>
-                                <div class="flex-between"><span style="font-size:13px;">Constitutional Citations</span><strong id="score-citations">0/10</strong></div>
-                                <div style="height:6px; background:var(--bg-main); border-radius:3px; margin-top:4px;"><div id="bar-citations" style="height:100%; width:0%; background:var(--success); border-radius:3px; transition: var(--transition);"></div></div>
-                            </div>
-                        </div>
-                        <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
-                            <h5 style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Critique Metric Output:</h5>
-                            <p id="mains-ai-critique" style="font-size:13px; margin-top:5px; line-height:1.4; color:var(--text-main);">Submit your written structure to calculate parameters.</p>
-                        </div>
-                    </div>
-                    
-                    <div id="mains-normal-checklist" class="card hidden">
-                        <h4><i class="fas fa-tasks"></i> Manual Marking Checklist</h4>
-                        <ul style="margin-left:20px; margin-top:10px; font-size:13px; display:flex; flex-direction:column; gap:8px; color:var(--text-muted);">
-                            <li>Verified explicit intro defining role of Article 153/154?</li>
-                            <li>Cited case frameworks (e.g. S.R. Bommai parameters)?</li>
-                            <li>Balanced forward recommendations presented inside final summary?</li>
+                        <h3>Syllabus Tracker</h3>
+                        <ul style="list-style: none; margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                            <li><label><input type="checkbox" checked> GS 1: Modern History</label></li>
+                            <li><label><input type="checkbox"> GS 2: Governance</label></li>
+                            <li><label><input type="checkbox"> GS 3: Internal Security</label></li>
+                            <li><label><input type="checkbox"> GS 4: Ethics Case Studies</label></li>
                         </ul>
                     </div>
                 </div>
             </div>
 
             <div id="notes" class="view">
-                <div class="flex-between mb-3">
-                    <h2>Smart Notes System</h2>
-                    <button class="btn" onclick="app.createNewNote()"><i class="fas fa-plus"></i> Add Entry</button>
+                <h2>Digital Notes</h2>
+                <div class="card mt-3">
+                    <input type="text" id="note-title" placeholder="Topic Heading (e.g., Article 356)" style="margin-bottom: 15px; font-weight: bold; font-size: 16px;">
+                    <textarea id="note-content" placeholder="Compile your revision notes here..."></textarea>
+                    <button class="btn-primary" style="margin-top: 15px;" onclick="app.saveNote()"><i class="fas fa-save"></i> Commit Note</button>
                 </div>
-                <div class="notes-layout">
-                    <div class="notes-list" id="notes-list-container"></div>
-                    <div class="notes-editor">
-                        <input type="text" id="note-title" placeholder="Topic Heading...">
-                        <textarea id="note-content" placeholder="Compile historical insights, parameters, or updates here..."></textarea>
-                        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-                            <button class="btn-outline" style="color:var(--danger);" onclick="app.deleteCurrentNote()"><i class="fas fa-trash"></i> Wipe</button>
-                            <button class="btn" onclick="app.saveNote()"><i class="fas fa-save"></i> Save Note</button>
-                        </div>
+                <div id="saved-notes-list" style="display: grid; gap: 15px;">
                     </div>
-                </div>
-            </div>
-
-            <div id="interview" class="view">
-                <h2>Interactive Mock Interview Board</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Practice articulation skills using optimized panel structural questions.</p>
-                
-                <div class="card text-center" style="padding: 35px; text-align: center; border: 1px solid var(--border);">
-                    <div id="mic-icon-container" style="width: 65px; height: 65px; border-radius: 50%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; color: var(--primary); font-size: 24px;">
-                        <i class="fas fa-microphone" id="mic-status-icon"></i>
-                    </div>
-                    <h3 id="panelist-title">UPSC Mock Panel Desk</h3>
-                    
-                    <p id="interview-question-display" style="font-size: 16px; font-weight: 600; max-width: 650px; margin: 15px auto; line-height: 1.5;">
-                        Click "Begin Board Session" below to initialize the question matrix.
-                    </p>
-                    
-                    <div id="interview-ai-transcript" class="ai-feature-container" style="background: var(--bg-main); padding: 12px; border-radius: 8px; font-size: 13px; max-width: 600px; margin: 15px auto; min-height: 40px; color: var(--text-muted);">
-                        <em>[AI Voice Channel Active] Spoken audio streaming translates here directly...</em>
-                    </div>
-
-                    <div style="display: flex; justify-content: center; gap:10px; flex-wrap: wrap;">
-                        <button class="btn" id="btn-start-session" onclick="aiEngine.startInterviewSession()">Begin Board Session</button>
-                        <button class="btn btn-outline ai-feature-container" id="btn-mic-toggle" onclick="aiEngine.toggleSpeechRecording()" disabled><i class="fas fa-play"></i> Turn Mic ON</button>
-                        <button class="btn-outline" onclick="aiEngine.nextInterviewQuestion()">Skip to Next Question</button>
-                    </div>
-                </div>
             </div>
 
         </div>
     </main>
 
     <script>
-        // --- DATA STORE POOL ---
-        const questionBank = [
+        // --- 1. DATA STORE (Expand this or fetch from JSON) ---
+        // To scale to 1000+, you would typically use: fetch('questions.json').then(...)
+        const database = [
             {
-                id: 1, subject: 'Polity', difficulty: 'Core',
-                question: "Consider the following assertions concerning Constitutional Frameworks:\n1. The 42nd Amendment placed explicit restrictions on Judicial Review.\n2. Article 32 cannot be suspended under any national contingency.\nIdentify the correct configurations:",
+                id: "POL-01", subject: "Polity",
+                q: "Consider the following statements regarding the 9th Schedule of the Indian Constitution:\n1. It was added by the 1st Amendment Act.\n2. Laws placed in it are absolutely immune from Judicial Review.\nWhich is correct?",
                 options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
-                correctIndex: 0,
-                explanation: "The 42nd Constitutional Amendment Act of 1976 curtailed judicial review capabilities significantly. Conversely, Article 32 rights can be suspended explicitly during an active Operational Emergency declaration under Article 359.",
-                tags: ["Judicial Review", "Article 32"]
+                ansIndex: 0,
+                exp: "The 9th Schedule was added by the 1st Amendment (1951). However, the Supreme Court in the I.R. Coelho case (2007) ruled that laws placed in the 9th Schedule after April 24, 1973, are subject to Judicial Review if they violate the basic structure."
             },
             {
-                id: 2, subject: 'Economy', difficulty: 'Advanced',
-                question: "If the Reserve Bank of India adopts an expansionary monetary posture, which actions should it explicitly avoid?",
-                options: ["Decreasing the MSF Rate", "Increasing the Statutory Liquidity Ratio (SLR)", "Purchasing Securities via OMO", "Lowering the Repo Rate"],
-                correctIndex: 1,
-                explanation: "An expansionary stance attempts to boost market liquidity. Increasing the SLR locks up commercial banking capital, restricting market liquidity. This runs contrary to expansionary objectives.",
-                tags: ["Monetary Policy", "SLR"]
+                id: "HIS-01", subject: "History",
+                q: "The 'Swadeshi Movement' was primarily triggered as a direct reaction to:",
+                options: ["The Rowlatt Act", "The Partition of Bengal", "The failure of the Cripps Mission", "The Jallianwala Bagh massacre"],
+                ansIndex: 1,
+                exp: "The Swadeshi Movement (1905) was launched explicitly to oppose Lord Curzon's decision to partition Bengal. The Rowlatt Act triggered Non-Cooperation, and Cripps failure led to Quit India."
             },
             {
-                id: 3, subject: 'History', difficulty: 'Moderate',
-                question: "The historic Lucknow Pact of 1916 primarily achieved reconciliation between which critical factions?",
-                options: ["Moderates and Extremists only", "Indian National Congress and All-India Muslim League", "Swarajists and No-Changers", "British Administration and Princely Delegates"],
-                correctIndex: 1,
-                explanation: "The Lucknow Pact of 1916 marked a milestone joint platform alliance linking the Indian National Congress and the All-India Muslim League, alongside resolving Moderate-Extremist structural differences.",
-                tags: ["Modern History", "Lucknow Pact"]
+                id: "ECO-01", subject: "Economy",
+                q: "Which of the following actions by the RBI is considered an 'Expansionary Monetary Policy'?",
+                options: ["Increasing the Repo Rate", "Selling Government Securities", "Decreasing the Statutory Liquidity Ratio (SLR)", "Increasing the Cash Reserve Ratio (CRR)"],
+                ansIndex: 2,
+                exp: "Expansionary policy aims to increase money supply. Decreasing SLR leaves more money with banks to lend. Increasing rates or selling securities (sucking money out) are contractionary."
             },
             {
-                id: 4, subject: 'CSAT', difficulty: 'Quantitative',
-                question: "A capital asset appreciates by 20% during year one, and subsequently decreases asset valuation by 10% in year two. Compute the net compounded structural yield shift over the complete cycle:",
-                options: ["10% Net Increase", "8% Net Increase", "12% Net Increase", "5% Net Decrease"],
-                correctIndex: 1,
-                explanation: "Base Valuation = 100. Year 1 (+20%) = 120. Year 2 Correction (-10% of 120) = 120 - 12 = 108. Net change = 108 - 100 = 8% net increase.",
-                tags: ["Compounding", "Aptitude"]
+                id: "GEO-01", subject: "Geography",
+                q: "Which of the following ocean currents is a 'Cold Current'?",
+                options: ["Kuroshio Current", "Gulf Stream", "Agulhas Current", "Canary Current"],
+                ansIndex: 3,
+                exp: "The Canary Current is a cold current flowing south along the North African coast. Kuroshio, Gulf Stream, and Agulhas are all warm water currents."
             }
         ];
 
-        const interviewQuestions = [
-            "Welcome candidate. Let us begin. What specific structural reforms would you implement to optimize local agricultural distribution lines if assigned as a District Magistrate?",
-            "With major technology ecosystems changing global industrial landscapes, how should India shape data sovereignty rules without suppressing structural market innovations?",
-            "An executive order challenges fundamental environmental protocols for an important industrial development. As the supervising IAS authority, how do you manage legal protocols alongside immediate development goals?"
-        ];
+        // --- 2. GLOBAL STATE ---
+        const state = {
+            theme: localStorage.getItem('theme') || 'light',
+            stats: JSON.parse(localStorage.getItem('upsc_stats')) || {
+                totalSolved: 0,
+                correct: 0,
+                subjects: { Polity: 0, History: 0, Economy: 0, Geography: 0, Environment: 0 }
+            },
+            notes: JSON.parse(localStorage.getItem('upsc_notes')) || []
+        };
 
-        // --- PLATFORM CORE ARCHITECTURE STATE ---
+        // --- 3. APP CONTROLLER ---
         const app = {
-            currentTheme: localStorage.getItem('theme') || 'light',
-            aiModeActive: localStorage.getItem('ai_mode_active') !== 'false', // Default to true or last saved choice
-            currentSubjectFilter: 'All',
-            currentQuestion: null,
-            questionAnswered: false,
-            
-            stats: JSON.parse(localStorage.getItem('upsc_stats_v3')) || {
-                streak: 8, solved: 64, correct: 51,
-                subjectPerformance: { Polity: 80, Economy: 65, History: 70, CSAT: 60 }
-            },
-            notes: JSON.parse(localStorage.getItem('upsc_notes_v3')) || [
-                { id: 1, title: "Sarkaria Commission Insight", content: "Core structural notes on Article 356 usage. Governor should explore alternative options before reporting system breakdown.", date: new Date().toISOString() }
-            ],
-            currentNoteId: null,
-
-            init: function() {
-                if(this.currentTheme === 'dark') document.body.classList.add('dark-mode');
-                this.updateThemeIcon();
-                this.applyAIModeUI();
-                this.renderDashboard();
-                this.renderNotesList();
-                this.renderTargets();
-            },
-
-            // --- AI CONTROLLER TOGGLE FUNCTIONALITY ---
-            toggleAIMode: function() {
-                this.aiModeActive = !this.aiModeActive;
-                localStorage.setItem('ai_mode_active', this.aiModeActive);
-                this.applyAIModeUI();
-            },
-
-            applyAIModeUI: function() {
-                const btn = document.getElementById('mode-toggle-btn');
-                const text = document.getElementById('mode-status-text');
-                const aiFeatures = document.querySelectorAll('.ai-feature-container');
-                const normalChecklist = document.getElementById('mains-normal-checklist');
-
-                if(this.aiModeActive) {
-                    btn.classList.add('ai-active');
-                    text.innerText = "AI Mode: Enabled";
-                    aiFeatures.forEach(el => el.classList.remove('hidden-mode'));
-                    if(normalChecklist) normalChecklist.classList.add('hidden');
-                    aiEngine.generatePerformanceInsight();
-                } else {
-                    btn.classList.remove('ai-active');
-                    text.innerText = "Normal Mode Active";
-                    aiFeatures.forEach(el => el.classList.add('hidden-mode'));
-                    if(normalChecklist) normalChecklist.classList.remove('hidden');
-                }
-            },
-
-            switchView: function(viewId) {
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                if(event) event.currentTarget.classList.add('active');
+            init() {
+                // Apply Theme
+                document.body.setAttribute('data-theme', state.theme);
+                document.getElementById('theme-icon').className = state.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
                 
-                document.getElementById('page-title').innerText = viewId.toUpperCase() + " SYSTEM CONTROLLER";
-                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                // Start Countdown
+                this.startCountdown('2027-05-28T00:00:00'); // Approx date for Prelims 2027
+                
+                // Load Dashboard Data
+                this.updateDashboard();
+                
+                // Initialize MCQ Engine
+                mcqEngine.loadNext();
+                
+                // Render Notes
+                this.renderNotes();
+            },
+
+            navigate(viewId) {
+                // UI Tab Switching
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+                
+                document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
                 document.getElementById(viewId).classList.add('active');
-
-                if(viewId === 'prelims' && !this.currentQuestion) this.loadNextQuestion();
+                
+                const titles = { dashboard: "Overview Dashboard", prelims: "Prelims Simulator", mains: "Mains Workspace", notes: "Digital Notes" };
+                document.getElementById('page-title').innerText = titles[viewId];
+                
+                if(viewId === 'dashboard') this.renderChart();
             },
 
-            toggleTheme: function() {
-                document.body.classList.toggle('dark-mode');
-                this.currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-                localStorage.setItem('theme', this.currentTheme);
-                this.updateThemeIcon();
+            toggleTheme() {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', state.theme);
+                document.getElementById('theme-icon').className = state.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                localStorage.setItem('theme', state.theme);
+                if(document.getElementById('dashboard').classList.contains('active')) this.renderChart();
+            },
+
+            startCountdown(targetDate) {
+                const target = new Date(targetDate).getTime();
+                setInterval(() => {
+                    const now = new Date().getTime();
+                    const diff = target - now;
+                    if(diff < 0) return document.getElementById('countdown').innerText = "EXAM DAY";
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    document.getElementById('countdown').innerText = `${d} Days, ${h} Hrs`;
+                }, 1000);
+            },
+
+            updateDashboard() {
+                document.getElementById('total-solved').innerText = state.stats.totalSolved;
+                document.getElementById('target-progress').value = state.stats.totalSolved;
+                const acc = state.stats.totalSolved > 0 ? Math.round((state.stats.correct / state.stats.totalSolved) * 100) : 0;
+                document.getElementById('global-accuracy').innerText = acc + '%';
                 this.renderChart();
             },
 
-            updateThemeIcon: function() {
-                const icon = document.getElementById('theme-icon');
-                icon.className = this.currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            },
-
-            renderDashboard: function() {
-                document.getElementById('streak-display').innerText = this.stats.streak + ' Days Active';
-                document.getElementById('solved-display').innerText = this.stats.solved + ' Solved';
-                const acc = this.stats.solved > 0 ? Math.round((this.stats.correct / this.stats.solved) * 100) : 75;
-                document.getElementById('accuracy-display').innerText = acc + '%';
-                this.renderChart();
-            },
-
-            renderTargets: function() {
-                const list = document.getElementById('target-list');
-                const tasks = [
-                    "Evaluate statutory provisions concerning federal distribution setups",
-                    "Solve 15 target conceptual history database problems",
-                    "Update structural definitions inside operational data stores"
-                ];
-                list.innerHTML = tasks.map(t => `<label style="display:flex; gap:10px; align-items:center; font-size:14px;"><input type="checkbox" style="accent-color:var(--primary);"> ${t}</label>`).join('');
-            },
-
-            renderChart: function() {
-                const ctx = document.getElementById('performanceChart');
+            renderChart() {
+                const ctx = document.getElementById('analyticsChart');
                 if(!ctx) return;
                 if(window.myChart) window.myChart.destroy();
                 
-                // FIXED: Safe hex colors string instead of direct CSS variables parsing code crash bug
-                const lineCol = this.currentTheme === 'dark' ? '#374151' : '#e5e7eb';
-                const labelCol = this.currentTheme === 'dark' ? '#cbd5e1' : '#64748b';
-                
+                const gridColor = state.theme === 'dark' ? '#4a5568' : '#e2e8f0';
+                const textColor = state.theme === 'dark' ? '#a0aec0' : '#718096';
+
                 window.myChart = new Chart(ctx, {
-                    type: 'radar',
+                    type: 'bar',
                     data: {
-                        labels: Object.keys(this.stats.subjectPerformance),
+                        labels: Object.keys(state.stats.subjects),
                         datasets: [{
-                            data: Object.values(this.stats.subjectPerformance),
-                            backgroundColor: 'rgba(139, 92, 246, 0.12)',
-                            borderColor: '#8b5cf6',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#7c3aed'
+                            label: 'Questions Solved',
+                            data: Object.values(state.stats.subjects),
+                            backgroundColor: '#2b6cb0',
+                            borderRadius: 4
                         }]
                     },
                     options: {
-                        scales: { 
-                            r: { 
-                                grid: { color: lineCol }, 
-                                angleLines: { color: lineCol }, 
-                                pointLabels: { color: labelCol }, 
-                                suggestedMin: 10, 
-                                suggestedMax: 100 
-                            } 
+                        scales: {
+                            y: { grid: { color: gridColor }, ticks: { color: textColor } },
+                            x: { grid: { display: false }, ticks: { color: textColor } }
                         },
                         plugins: { legend: { display: false } }
                     }
                 });
             },
 
-            setSubject: function(subj) {
-                this.currentSubjectFilter = subj;
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-                event.target.classList.add('active');
-                this.loadNextQuestion();
+            saveNote() {
+                const title = document.getElementById('note-title').value;
+                const content = document.getElementById('note-content').value;
+                if(!content) return;
+                
+                state.notes.unshift({ id: Date.now(), title: title || 'Untitled', content, date: new Date().toLocaleDateString() });
+                localStorage.setItem('upsc_notes', JSON.stringify(state.notes));
+                
+                document.getElementById('note-title').value = '';
+                document.getElementById('note-content').value = '';
+                this.renderNotes();
             },
 
-            loadNextQuestion: function() {
-                let pool = this.currentSubjectFilter === 'All' ? questionBank : questionBank.filter(q => q.subject === this.currentSubjectFilter);
-                const q = pool[Math.floor(Math.random() * pool.length)];
-                this.currentQuestion = q;
-                this.questionAnswered = false;
+            renderNotes() {
+                const container = document.getElementById('saved-notes-list');
+                container.innerHTML = state.notes.map(n => `
+                    <div class="card" style="margin-bottom:0; background: var(--bg-body);">
+                        <div class="flex-between"><h4 style="color:var(--primary);">${n.title}</h4><small class="text-muted">${n.date}</small></div>
+                        <p style="margin-top:10px; line-height:1.5;">${n.content}</p>
+                    </div>
+                `).join('');
+            }
+        };
 
-                document.getElementById('q-metadata').innerText = `${q.subject.toUpperCase()} // MATRIC LEVEL ENTRY // ENGINE CODE: 0${q.id}`;
-                document.getElementById('q-text').innerText = q.question;
-                document.getElementById('q-explanation').classList.add('hidden');
+        // --- 4. MCQ ENGINE ---
+        const mcqEngine = {
+            currentFilter: 'All',
+            currentQ: null,
+            isAnswered: false,
+
+            setFilter(subject) {
+                this.currentFilter = subject;
+                document.querySelectorAll('.filter-tag').forEach(tag => tag.classList.remove('active'));
+                event.target.classList.add('active');
+                this.loadNext();
+            },
+
+            loadNext() {
+                const pool = this.currentFilter === 'All' ? database : database.filter(q => q.subject === this.currentFilter);
+                if (pool.length === 0) {
+                    document.getElementById('q-text').innerText = "No questions available for this subject yet.";
+                    document.getElementById('q-options-container').innerHTML = '';
+                    return;
+                }
+
+                // Randomly select a question from the pool
+                this.currentQ = pool[Math.floor(Math.random() * pool.length)];
+                this.isAnswered = false;
+
+                // Render UI
+                document.getElementById('q-subject').innerText = this.currentQ.subject;
+                document.getElementById('q-id').innerText = `Ref: ${this.currentQ.id}`;
+                document.getElementById('q-text').innerText = this.currentQ.q;
+                document.getElementById('q-explanation').classList.remove('show');
+
+                const optsContainer = document.getElementById('q-options-container');
+                optsContainer.innerHTML = '';
                 
-                const optContainer = document.getElementById('q-options');
-                optContainer.innerHTML = '';
-                const labels = ['A', 'B', 'C', 'D'];
-                
-                q.options.forEach((opt, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'option';
-                    div.onclick = () => this.submitAnswer(idx, div);
-                    div.innerHTML = `<div class="option-label">${labels[idx]}</div><div>${opt}</div>`;
-                    optContainer.appendChild(div);
+                const letters = ['A', 'B', 'C', 'D'];
+                this.currentQ.options.forEach((optText, index) => {
+                    const optDiv = document.createElement('div');
+                    optDiv.className = 'mcq-option';
+                    optDiv.innerHTML = `<div style="width:25px; height:25px; background:var(--border); border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px;">${letters[index]}</div> <div>${optText}</div>`;
+                    optDiv.onclick = () => this.submitAnswer(index, optDiv);
+                    optsContainer.appendChild(optDiv);
                 });
             },
 
-            submitAnswer: function(idx, el) {
-                if(this.questionAnswered) return;
-                this.questionAnswered = true;
+            submitAnswer(selectedIndex, element) {
+                if(this.isAnswered) return;
+                this.isAnswered = true;
 
-                const correct = idx === this.currentQuestion.correctIndex;
-                const options = document.getElementById('q-options').children;
+                const isCorrect = (selectedIndex === this.currentQ.ansIndex);
+                const allOptions = document.querySelectorAll('.mcq-option');
 
-                for(let i=0; i<options.length; i++) {
-                    options[i].classList.add('disabled');
-                    if(i === this.currentQuestion.correctIndex) options[i].classList.add('correct');
-                    else if(i === idx) options[i].classList.add('wrong');
-                }
+                // Visual Feedback
+                allOptions.forEach((opt, idx) => {
+                    opt.classList.add('locked');
+                    if (idx === this.currentQ.ansIndex) {
+                        opt.classList.add('correct'); // Always show correct answer
+                    } else if (idx === selectedIndex && !isCorrect) {
+                        opt.classList.add('wrong'); // Cross out the wrong selection
+                    }
+                });
 
-                this.stats.solved++;
-                if(correct) {
-                    this.stats.correct++;
-                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.min(100, this.stats.subjectPerformance[this.currentQuestion.subject] + 5);
-                } else {
-                    this.stats.subjectPerformance[this.currentQuestion.subject] = Math.max(20, this.stats.subjectPerformance[this.currentQuestion.subject] - 4);
-                }
+                // Show Explanation
+                document.getElementById('exp-content').innerText = this.currentQ.exp;
+                document.getElementById('q-explanation').classList.add('show');
+
+                // Update Stats
+                state.stats.totalSolved++;
+                if(isCorrect) state.stats.correct++;
+                if(!state.stats.subjects[this.currentQ.subject]) state.stats.subjects[this.currentQ.subject] = 0;
+                state.stats.subjects[this.currentQ.subject]++;
                 
-                localStorage.setItem('upsc_stats_v3', JSON.stringify(this.stats));
-                this.renderDashboard();
-
-                document.getElementById('exp-text').innerText = this.currentQuestion.explanation;
-                document.getElementById('q-explanation').classList.remove('hidden');
-            },
-
-            renderNotesList: function() {
-                const container = document.getElementById('notes-list-container');
-                container.innerHTML = this.notes.map(n => `
-                    <div class="note-item ${this.currentNoteId === n.id ? 'active' : ''}" onclick="app.loadNote(${n.id})">
-                        <strong>${n.title || 'Blank Header Frame'}</strong>
-                        <div style="font-size:11px; margin-top:3px; color:var(--text-muted);">${new Date(n.date).toLocaleDateString()}</div>
-                    </div>
-                `).join('');
-            },
-
-            createNewNote: function() {
-                this.currentNoteId = null;
-                document.getElementById('note-title').value = '';
-                document.getElementById('note-content').value = '';
-                this.renderNotesList();
-            },
-
-            loadNote: function(id) {
-                this.currentNoteId = id;
-                const n = this.notes.find(note => note.id === id);
-                document.getElementById('note-title').value = n.title;
-                document.getElementById('note-content').value = n.content;
-                this.renderNotesList();
-            },
-
-            saveNote: function() {
-                const t = document.getElementById('note-title').value || "Manual Archive Entry";
-                const c = document.getElementById('note-content').value;
-                if(!c) return;
-
-                if(this.currentNoteId) {
-                    const n = this.notes.find(note => note.id === this.currentNoteId);
-                    n.title = t; n.content = c; n.date = new Date().toISOString();
-                } else {
-                    const newN = { id: Date.now(), title: t, content: c, date: new Date().toISOString() };
-                    this.notes.push(newN);
-                    this.currentNoteId = newN.id;
-                }
-                localStorage.setItem('upsc_notes_v3', JSON.stringify(this.notes));
-                this.renderNotesList();
-            },
-
-            deleteCurrentNote: function() {
-                if(!this.currentNoteId) return;
-                this.notes = this.notes.filter(n => n.id !== this.currentNoteId);
-                localStorage.setItem('upsc_notes_v3', JSON.stringify(this.notes));
-                this.createNewNote();
+                localStorage.setItem('upsc_stats', JSON.stringify(state.stats));
+                app.updateDashboard();
             }
         };
 
-        // --- FAST RESPONSIVE DYNAMIC AI INSTANT RECOGNITION SYSTEM ---
-        const aiEngine = {
-            recognition: null,
-            isRecording: false,
-            currentInterviewIndex: 0,
-
-            generatePerformanceInsight: function() {
-                if(!app.aiModeActive) return;
-                const lowSubject = Object.keys(app.stats.subjectPerformance).reduce((a, b) => app.stats.subjectPerformance[a] < app.stats.subjectPerformance[b] ? a : b);
-                const score = app.stats.subjectPerformance[lowSubject];
-                document.getElementById('ai-insight-text').innerHTML = `
-                    <i class="fas fa-bolt" style="color:var(--warning)"></i> <strong>Active AI Diagnostics Matrix:</strong> Conceptual performance tracking flags a priority revision bottleneck in <strong>${lowSubject}</strong> (Score vector: ${score}%). Focus study targets around these structural points to optimize global accuracy profile vectors.
-                `;
-            },
-
-            askDoubt: function() {
-                const inputEl = document.getElementById('ai-chat-input');
-                const text = inputEl.value.trim();
-                if(!text) return;
-
-                const chatOut = document.getElementById('ai-chat-output');
-                chatOut.innerHTML += `<div class="chat-bubble user">${text}</div>`;
-                inputEl.value = '';
-
-                setTimeout(() => {
-                    let aiReply = "Dynamic topic analysis loaded. Inside civil services documentation protocols, this concept forms the core accountability metrics defining federal integration systems.";
-                    if(text.toLowerCase().includes('article')) aiReply = "Constitutional Article vector recognized. Correlate this parameter explicitly with major Supreme Court milestones to secure maximum evaluation output points.";
-                    if(text.toLowerCase().includes('slr') || text.toLowerCase().includes('rate')) aiReply = "Macroeconomic liquidity directive identified. Tightening or easing infrastructure reserves alters commercial market liquidity thresholds directly.";
-                    
-                    chatOut.innerHTML += `<div class="chat-bubble ai"><strong>AI System response:</strong> ${aiReply}</div>`;
-                    chatOut.scrollTop = chatOut.scrollHeight;
-                }, 120);
-            },
-
-            evaluateMainsAnswer: function() {
-                const val = document.getElementById('mains-answer-input').value.trim();
-                if(val.length < 25) return alert("Write down a structured sample reply to accurately compute metrics.");
-
-                const report = document.getElementById('mains-ai-report');
-                report.classList.remove('hidden');
-
-                const hasIntro = val.toLowerCase().includes('governor') || val.toLowerCase().includes('article');
-                const hasCitations = val.match(/article\s\d+|constitution|judgment/gi);
-
-                const s1 = hasIntro ? 8 : 4;
-                const s2 = hasCitations ? Math.min(10, 4 + hasCitations.length * 2) : 3;
-
-                document.getElementById('score-structure').innerText = `${s1}/10`;
-                document.getElementById('score-citations').innerText = `${s2}/10`;
-
-                document.getElementById('bar-structure').style.width = `${s1*10}%`;
-                document.getElementById('bar-citations').style.width = `${s2*10}%`;
-
-                document.getElementById('mains-ai-critique').innerHTML = `
-                    ${hasCitations ? 'Clean reference anchoring found.' : 'Missing explicit constitutional provisions. Connect target clauses (e.g. Article 163/154 parameters) to scale content validation metrics.'}
-                `;
-            },
-
-            startInterviewSession: function() {
-                this.currentInterviewIndex = 0;
-                const micBtn = document.getElementById('btn-mic-toggle');
-                if(micBtn) micBtn.removeAttribute('disabled');
-                document.getElementById('btn-start-session').innerText = "Session Live";
-                this.presentInterviewQuestion();
-                
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if(SpeechRecognition) {
-                    this.recognition = new SpeechRecognition();
-                    this.recognition.continuous = true;
-                    this.recognition.interimResults = true;
-                    
-                    this.recognition.onresult = (event) => {
-                        let textAccumulator = '';
-                        for(let i = event.resultIndex; i < event.results.length; ++i) {
-                            if(event.results[i].isFinal) textAccumulator += event.results[i][0].transcript;
-                        }
-                        if(textAccumulator) {
-                            document.getElementById('voice-transcript-box').innerText = textAccumulator;
-                        }
-                    };
-                }
-            },
-
-            presentInterviewQuestion: function() {
-                const question = interviewQuestions[this.currentInterviewIndex];
-                document.getElementById('interview-question-display').innerText = question;
-                
-                // Voice synthesis features trigger only during active AI Mode parameters
-                if(app.aiModeActive && 'speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(question);
-                    utterance.rate = 0.98;
-                    window.speechSynthesis.speak(utterance);
-                }
-            },
-
-            toggleSpeechRecording: function() {
-                if(!this.recognition) return alert("Microphone engine speech synthesis models missing or access blocked on this device profile.");
-                
-                const micBox = document.getElementById('mic-icon-container');
-                const btn = document.getElementById('btn-mic-toggle');
-
-                if(!this.isRecording) {
-                    this.recognition.start();
-                    this.isRecording = true;
-                    micBox.classList.add('pulse');
-                    micBox.style.background = 'rgba(239, 68, 68, 0.1)';
-                    micBox.style.color = 'var(--danger)';
-                    btn.innerHTML = `<i class="fas fa-stop"></i> Sync Answer Data`;
-                } else {
-                    this.recognition.stop();
-                    this.isRecording = false;
-                    micBox.classList.remove('pulse');
-                    micBox.style.background = 'var(--bg-main)';
-                    micBox.style.color = 'var(--primary)';
-                    btn.innerHTML = `<i class="fas fa-play"></i> Turn Mic ON`;
-                    
-                    setTimeout(() => {
-                        alert("Speech audio frames committed. Transitioning parameters to next board issue.");
-                        this.nextInterviewQuestion();
-                    }, 600);
-                }
-            },
-
-            nextInterviewQuestion: function() {
-                this.currentInterviewIndex = (this.currentInterviewIndex + 1) % interviewQuestions.length;
-                this.presentInterviewQuestion();
-            }
-        };
-
+        // Boot Application
         window.onload = () => app.init();
     </script>
 </body>
