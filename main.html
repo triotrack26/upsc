@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC Mains Practice</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.answer-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+textarea{
+    width:100%;
+    min-height:250px;
+    padding:10px;
+    font-size:16px;
+}
+
+.question{
+    background:#eef4ff;
+    padding:15px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+#wordCount{
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>UPSC Mains Answer Writing</h1>
+</header>
+
+<nav>
+<a href="index.html">Dashboard</a>
+<a href="syllabus.html">Syllabus</a>
+<a href="quiz.html">MCQ Practice</a>
+<a href="mains.html">Mains</a>
+<a href="currentaffairs.html">Current Affairs</a>
+<a href="planner.html">Planner</a>
+<a href="notes.html">Notes</a>
+</nav>
+
+<main>
+
+<div class="answer-box">
+
+<h2>Daily Mains Question</h2>
+
+<div class="question">
+Discuss the role of the Indian Constitution in maintaining the balance between Fundamental Rights and Directive Principles of State Policy.
+</div>
+
+<textarea
+id="answerArea"
+placeholder="Write your answer here..."></textarea>
+
+<br><br>
+
+<p>Word Count: <span id="wordCount">0</span></p>
+
+<button onclick="saveAnswer()">Save Answer</button>
+
+<button onclick="loadAnswer()">Load Saved Answer</button>
+
+</div>
+
+<div class="answer-box">
+
+<h2>Essay Practice</h2>
+
+<div class="question">
+Technology and Governance in Modern India
+</div>
+
+<p>
+Write a structured essay with Introduction,
+Body and Conclusion.
+</p>
+
+</div>
+
+<div class="answer-box">
+
+<h2>Answer Writing Tips</h2>
+
+<ul>
+<li>Start with a short introduction.</li>
+<li>Use headings and subheadings.</li>
+<li>Add examples and case studies.</li>
+<li>Maintain balanced arguments.</li>
+<li>End with a constructive conclusion.</li>
+</ul>
+
+</div>
+
+</main>
+
+<footer>
+<p>UPSC Civil Services Preparation Portal</p>
+</footer>
+
+<script>
+
+const answerArea =
+document.getElementById("answerArea");
+
+answerArea.addEventListener("input", updateWordCount);
+
+function updateWordCount(){
+
+let text =
+answerArea.value.trim();
+
+let count =
+text === ""
+? 0
+: text.split(/\s+/).length;
+
+document.getElementById("wordCount").innerHTML =
+count;
+}
+
+function saveAnswer(){
+
+localStorage.setItem(
+"upsc_mains_answer",
+answerArea.value
+);
+
+alert("Answer Saved");
+}
+
+function loadAnswer(){
+
+let saved =
+localStorage.getItem(
+"upsc_mains_answer"
+);
+
+answerArea.value = saved || "";
+
+updateWordCount();
+}
+
+loadAnswer();
+
+</script>
+
+</body>
+</html>
