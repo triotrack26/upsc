@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC Study Planner</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.planner-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+#taskInput{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+}
+
+#taskList li{
+    background:#f4f4f4;
+    padding:10px;
+    margin:5px 0;
+    border-radius:5px;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<h1>UPSC Study Planner</h1>
+</header>
+
+<nav>
+<a href="index.html">Dashboard</a>
+<a href="syllabus.html">Syllabus</a>
+<a href="quiz.html">MCQ Practice</a>
+<a href="mains.html">Mains</a>
+<a href="currentaffairs.html">Current Affairs</a>
+<a href="planner.html">Planner</a>
+<a href="notes.html">Notes</a>
+</nav>
+
+<main>
+
+<div class="planner-box">
+
+<h2>Today's Study Plan</h2>
+
+<input
+type="text"
+id="taskInput"
+placeholder="Example: Complete Laxmikanth Chapter 5">
+
+<button onclick="addTask()">
+Add Task
+</button>
+
+</div>
+
+<div class="planner-box">
+
+<h2>Task List</h2>
+
+<ul id="taskList"></ul>
+
+</div>
+
+</main>
+
+<footer>
+<p>UPSC Civil Services Preparation Portal</p>
+</footer>
+
+<script>
+
+function addTask(){
+
+let task =
+document.getElementById("taskInput").value;
+
+if(task === ""){
+return;
+}
+
+let tasks =
+JSON.parse(
+localStorage.getItem("upscTasks")
+) || [];
+
+tasks.push(task);
+
+localStorage.setItem(
+"upscTasks",
+JSON.stringify(tasks)
+);
+
+document.getElementById("taskInput").value="";
+
+loadTasks();
+}
+
+function deleteTask(index){
+
+let tasks =
+JSON.parse(
+localStorage.getItem("upscTasks")
+) || [];
+
+tasks.splice(index,1);
+
+localStorage.setItem(
+"upscTasks",
+JSON.stringify(tasks)
+);
+
+loadTasks();
+}
+
+function loadTasks(){
+
+let tasks =
+JSON.parse(
+localStorage.getItem("upscTasks")
+) || [];
+
+let html="";
+
+tasks.forEach((task,index)=>{
+
+html += `
+<li>
+${task}
+<button onclick="deleteTask(${index})">
+Delete
+</button>
+</li>
+`;
+
+});
+
+document.getElementById("taskList").innerHTML =
+html;
+}
+
+loadTasks();
+
+</script>
+
+</body>
+</html>
