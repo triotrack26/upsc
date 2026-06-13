@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Current Affairs</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.affairs-box{
+    background:white;
+    padding:20px;
+    margin:20px 0;
+    border-radius:10px;
+}
+
+.search-box{
+    width:100%;
+    padding:10px;
+    margin-bottom:20px;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<h1>UPSC Current Affairs</h1>
+</header>
+
+<nav>
+<a href="index.html">Dashboard</a>
+<a href="syllabus.html">Syllabus</a>
+<a href="quiz.html">MCQ Practice</a>
+<a href="mains.html">Mains</a>
+<a href="currentaffairs.html">Current Affairs</a>
+<a href="planner.html">Planner</a>
+<a href="notes.html">Notes</a>
+</nav>
+
+<main>
+
+<div class="affairs-box">
+
+<h2>Search Current Affairs</h2>
+
+<input
+type="text"
+id="searchInput"
+class="search-box"
+placeholder="Search topic..."
+onkeyup="searchAffairs()">
+
+</div>
+
+<div class="affairs-box affair-item">
+
+<h3>Economy</h3>
+
+<p>
+Union Budget focuses on infrastructure,
+employment generation and digital growth.
+</p>
+
+</div>
+
+<div class="affairs-box affair-item">
+
+<h3>Environment</h3>
+
+<p>
+Climate change adaptation and renewable
+energy remain major policy priorities.
+</p>
+
+</div>
+
+<div class="affairs-box affair-item">
+
+<h3>International Relations</h3>
+
+<p>
+India continues strengthening strategic
+partnerships with major global powers.
+</p>
+
+</div>
+
+<div class="affairs-box affair-item">
+
+<h3>Science & Technology</h3>
+
+<p>
+Advances in AI, semiconductors and space
+technology remain important for UPSC.
+</p>
+
+</div>
+
+<div class="affairs-box affair-item">
+
+<h3>Government Schemes</h3>
+
+<p>
+Track important schemes, ministries,
+objectives and beneficiaries.
+</p>
+
+</div>
+
+</main>
+
+<footer>
+<p>UPSC Civil Services Preparation Portal</p>
+</footer>
+
+<script>
+
+function searchAffairs(){
+
+let input =
+document.getElementById("searchInput")
+.value.toLowerCase();
+
+let items =
+document.getElementsByClassName("affair-item");
+
+for(let i=0;i<items.length;i++){
+
+let text =
+items[i].innerText.toLowerCase();
+
+if(text.includes(input)){
+
+items[i].style.display="block";
+
+}else{
+
+items[i].style.display="none";
+
+}
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
