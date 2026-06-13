@@ -14,113 +14,156 @@
     <style>
         :root {
             --primary: #1e3a8a;
+            --primary-light: #2563eb;
             --secondary: #3b82f6;
             --accent: #f59e0b;
-            --bg-main: #f3f4f6;
+            --bg-main: #f0fdf4; /* Very light slate/blue tint for background */
+            --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --text-dark: #1f2937;
-            --text-muted: #6b7280;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
             --success: #10b981;
             --danger: #ef4444;
-            --border: #e5e7eb;
-            --sidebar-width: 260px;
+            --border: #e2e8f0;
+            --sidebar-width: 280px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { display: flex; height: 100vh; background: var(--bg-main); color: var(--text-dark); overflow: hidden; }
-        button { cursor: pointer; border: none; outline: none; background: none; transition: 0.2s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+        body { display: flex; height: 100vh; background: var(--bg-body); color: var(--text-dark); overflow: hidden; }
+        button { cursor: pointer; border: none; outline: none; background: none; transition: all 0.2s ease-in-out; }
 
         /* Sidebar */
-        #sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10;}
-        .logo { padding: 20px; font-size: 20px; font-weight: bold; color: var(--primary); border-bottom: 1px solid var(--border); }
-        .nav-link { padding: 15px 20px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-weight: 500; border-left: 4px solid transparent; width: 100%; text-align: left; }
-        .nav-link:hover, .nav-link.active { background: #eff6ff; color: var(--secondary); border-left-color: var(--secondary); }
+        #sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 50; transition: transform 0.3s ease; }
+        .logo { padding: 24px; font-size: 22px; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .nav-link { padding: 16px 24px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-weight: 600; border-left: 4px solid transparent; width: 100%; text-align: left; font-size: 15px; }
+        .nav-link:hover { background: #f1f5f9; color: var(--primary-light); }
+        .nav-link.active { background: #eff6ff; color: var(--primary-light); border-left-color: var(--primary-light); }
+        .sidebar-footer { padding: 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 10px; background: #f8fafc; }
 
         /* Main Content */
-        #main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;}
-        header { background: var(--bg-card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .content-area { flex: 1; overflow-y: auto; padding: 30px; padding-bottom: 100px;}
+        #main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; width: 100%; }
+        header { background: var(--bg-card); padding: 16px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: var(--shadow-sm); }
+        .header-title-container { display: flex; align-items: center; gap: 15px; }
+        .mobile-menu-btn { display: none; font-size: 20px; color: var(--text-dark); }
         
-        .view { display: none; animation: fadeIn 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 30px; padding-bottom: 120px; background: var(--bg-body); }
+        
+        .view { display: none; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* UI Components */
-        .card { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 20px; }
-        .btn { background: var(--secondary); color: white; padding: 10px 20px; border-radius: 6px; font-weight: 600; }
-        .btn:hover { background: var(--primary); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-outline { border: 1px solid var(--secondary); color: var(--secondary); }
+        .card { background: var(--bg-card); padding: 24px; border-radius: 16px; box-shadow: var(--shadow-md); border: 1px solid var(--border); margin-bottom: 24px; }
+        .btn { background: var(--primary-light); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+        .btn:hover { background: var(--primary); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .btn:active { transform: translateY(0); }
+        .btn-outline { border: 1px solid var(--border); color: var(--text-dark); background: white; }
+        .btn-outline:hover { background: #f8fafc; border-color: var(--text-muted); }
+        .btn-danger-outline { border: 1px solid #fca5a5; color: var(--danger); background: #fef2f2; padding: 8px 16px; font-size: 13px; }
+        .btn-danger-outline:hover { background: #fee2e2; }
         
         /* Mock Test Engine */
-        .difficulty-selector { display: flex; gap: 10px; margin: 15px 0; }
-        .diff-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); }
+        .difficulty-selector { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; justify-content: center; }
+        .diff-btn { padding: 10px 20px; border-radius: 30px; border: 2px solid var(--border); font-weight: 600; color: var(--text-muted); background: white; }
+        .diff-btn:hover { border-color: var(--text-muted); }
         .diff-btn.active.easy { background: var(--success); color: white; border-color: var(--success); }
         .diff-btn.active.medium { background: var(--accent); color: white; border-color: var(--accent); }
         .diff-btn.active.tough { background: var(--danger); color: white; border-color: var(--danger); }
 
-        .mcq-option { padding: 15px; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
-        .mcq-option:hover:not(.locked) { border-color: var(--secondary); background: #f8fafc; }
-        .mcq-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; font-weight: bold; }
-        .mcq-option.wrong { border-color: var(--danger); background: #fef2f2; color: #991b1b; text-decoration: line-through; opacity: 0.7; }
+        .mcq-option { padding: 16px 20px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 16px; font-size: 15px; background: white; transition: all 0.2s; }
+        .mcq-option:hover:not(.locked) { border-color: var(--primary-light); background: #eff6ff; }
+        .mcq-option.correct { border-color: var(--success); background: #ecfdf5; color: #064e3b; font-weight: 600; }
+        .mcq-option.wrong { border-color: var(--danger); background: #fef2f2; color: #7f1d1d; text-decoration: line-through; opacity: 0.8; }
         .mcq-option.locked { cursor: not-allowed; }
         
-        .solution-box { margin-top: 20px; padding: 20px; border-radius: 8px; border-left: 5px solid var(--success); background: #f0fdf4; display: none; }
+        .solution-box { margin-top: 24px; padding: 24px; border-radius: 12px; border-left: 6px solid var(--success); background: #f0fdf4; display: none; box-shadow: var(--shadow-sm); }
         
-        .timer-bar { background: var(--border); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
-        .timer-fill { height: 100%; background: var(--secondary); width: 100%; transition: width 1s linear; }
+        .timer-bar { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 24px; }
+        .timer-fill { height: 100%; background: var(--primary-light); width: 100%; transition: width 1s linear; }
 
         /* PDF Tool */
-        .upload-area { border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; background: #f8fafc; transition: 0.3s; }
-        .upload-area:hover { border-color: var(--secondary); background: #eff6ff; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block; }
+        .upload-area { border: 2px dashed #cbd5e1; padding: 60px 20px; text-align: center; border-radius: 16px; cursor: pointer; background: #f8fafc; transition: all 0.3s; }
+        .upload-area:hover { border-color: var(--primary-light); background: #eff6ff; }
+        .loader { border: 4px solid #e2e8f0; border-top: 4px solid var(--primary-light); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; display: inline-block; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Live AI Assistant */
-        #ai-assistant { position: fixed; bottom: 30px; right: 30px; width: 350px; background: var(--bg-card); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--secondary); display: flex; flex-direction: column; overflow: hidden; z-index: 1000; transition: height 0.3s ease; }
-        .ai-header { background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; cursor: pointer; }
-        .ai-body { padding: 15px; height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
-        .ai-chat-bubble { padding: 10px 14px; border-radius: 8px; font-size: 14px; max-width: 85%; line-height: 1.5; }
-        .ai-chat-bubble.user { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
-        .ai-chat-bubble.bot { background: white; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
-        .ai-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border); background: white; }
-        .ai-input-area input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+        #ai-assistant { position: fixed; bottom: 30px; right: 30px; width: 380px; background: var(--bg-card); border-radius: 16px; box-shadow: var(--shadow-lg); border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; z-index: 1000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ai-header { background: var(--primary); color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; cursor: pointer; }
+        .ai-body { padding: 20px; height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f8fafc; }
+        .ai-chat-bubble { padding: 12px 16px; border-radius: 12px; font-size: 14px; max-width: 85%; line-height: 1.5; }
+        .ai-chat-bubble.user { background: var(--primary-light); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .ai-chat-bubble.bot { background: white; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: var(--shadow-sm); color: var(--text-dark); }
+        .ai-input-area { display: flex; padding: 15px; border-top: 1px solid var(--border); background: white; gap: 10px; }
+        .ai-input-area input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; outline: none; font-size: 14px; background: #f8fafc; }
+        .ai-input-area input:focus { border-color: var(--primary-light); background: white; }
+        .ai-send-btn { background: var(--primary-light); color: white; width: 44px; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ai-send-btn:hover { background: var(--primary); }
         
         /* Security Overlay */
-        #security-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(239, 68, 68, 0.95); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; text-align: center; }
+        #security-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(220, 38, 38, 0.98); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; text-align: center; padding: 20px; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #sidebar { position: fixed; left: -100%; height: 100%; box-shadow: var(--shadow-xl); }
+            #sidebar.open { left: 0; }
+            .mobile-menu-btn { display: block; }
+            #ai-assistant { width: calc(100% - 40px); bottom: 20px; right: 20px; }
+            .content-area { padding: 20px; }
+            .header-controls { flex-direction: column; gap: 10px; align-items: flex-end; }
+        }
     </style>
 </head>
 <body>
 
     <!-- Security Overlay -->
     <div id="security-overlay">
-        <i class="fas fa-exclamation-triangle" style="font-size: 60px; margin-bottom: 20px;"></i>
-        <h2>SECURITY VIOLATION DETECTED</h2>
-        <p>You navigated away from the exam window. This incident has been recorded.</p>
-        <button class="btn" style="margin-top: 20px; background: white; color: var(--danger);" onclick="document.getElementById('security-overlay').style.display='none'">Acknowledge & Return</button>
+        <i class="fas fa-shield-alt" style="font-size: 70px; margin-bottom: 24px;"></i>
+        <h2 style="font-size: 28px; margin-bottom: 10px;">Exam Violation Detected</h2>
+        <p style="font-size: 16px; opacity: 0.9; max-width: 500px;">You navigated away from the active exam window. In a real UPSC environment, this would result in disqualification.</p>
+        <button class="btn" style="margin-top: 30px; background: white; color: var(--danger); font-size: 16px; padding: 14px 30px;" onclick="document.getElementById('security-overlay').style.display='none'">Acknowledge & Return to Exam</button>
     </div>
 
     <!-- Sidebar -->
     <nav id="sidebar">
-        <div class="logo"><i class="fas fa-landmark"></i> UPSC Master</div>
-        <div style="flex: 1; overflow-y: auto;">
-            <button class="nav-link active" onclick="app.nav('study-plan')"><i class="fas fa-calendar-alt"></i> Study Plan</button>
-            <button class="nav-link" onclick="app.nav('notes')"><i class="fas fa-book-open"></i> Perfect Notes</button>
-            <button class="nav-link" onclick="app.nav('mock-test')"><i class="fas fa-stopwatch"></i> Secure Mock Tests</button>
-            <button class="nav-link" onclick="app.nav('pdf-tool')"><i class="fas fa-file-pdf"></i> Live PDF AI Tool</button>
+        <div class="logo">
+            <i class="fas fa-landmark"></i> 
+            <span>UPSC Master</span>
+            <button class="mobile-menu-btn" style="margin-left: auto;" onclick="document.getElementById('sidebar').classList.remove('open')">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <div style="padding: 15px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center;">
-            <i class="fas fa-check-circle" style="color: var(--success);"></i> Live Gemini AI Engine Active
+        <div style="flex: 1; overflow-y: auto; padding: 12px 0;">
+            <button class="nav-link active" onclick="app.nav('study-plan')"><i class="fas fa-calendar-alt" style="width: 20px;"></i> Study Plan</button>
+            <button class="nav-link" onclick="app.nav('notes')"><i class="fas fa-book-open" style="width: 20px;"></i> Perfect Notes</button>
+            <button class="nav-link" onclick="app.nav('mock-test')"><i class="fas fa-stopwatch" style="width: 20px;"></i> Secure Mock Tests</button>
+            <button class="nav-link" onclick="app.nav('pdf-tool')"><i class="fas fa-file-pdf" style="width: 20px;"></i> Live PDF Summarizer</button>
+        </div>
+        <div class="sidebar-footer">
+            <i class="fas fa-bolt" style="color: var(--accent);"></i> 
+            <span>Gemini Engine Ready</span>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main id="main-content">
         <header>
-            <h2 id="header-title">Structured Study Plan</h2>
-            <div style="display:flex; gap: 15px; align-items: center;">
-                <span style="font-size: 14px; color: var(--text-muted);">Solved: <strong id="solved-count" style="color: var(--primary);">0</strong></span>
-                <span style="background: #e0e7ff; color: var(--primary); padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-shield-alt"></i> Secure Mode</span>
+            <div class="header-title-container">
+                <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.add('open')">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="header-title" style="font-size: 20px; font-weight: 700; color: var(--primary);">Structured Study Plan</h2>
+            </div>
+            <div style="display:flex; gap: 15px; align-items: center;" class="header-controls">
+                <button class="btn btn-danger-outline" onclick="app.resetProgress()" title="Clear all solved questions">
+                    <i class="fas fa-sync-alt"></i> Reset Progress
+                </button>
+                <div style="display:flex; align-items: center; gap: 12px; background: #f1f5f9; padding: 8px 16px; border-radius: 30px;">
+                    <span style="font-size: 14px; color: var(--text-muted); font-weight: 500;">Questions Solved: <strong id="solved-count" style="color: var(--primary-light); font-size: 16px;">0</strong></span>
+                </div>
             </div>
         </header>
 
@@ -129,52 +172,63 @@
             <!-- 1. STUDY PLAN -->
             <div id="study-plan" class="view active">
                 <div class="card">
-                    <h3>Current Phase: Prelims Focus</h3>
-                    <p class="text-muted mt-2">Your schedule based on remaining syllabus. Use the Mock Test engine to track progress.</p>
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                        <tr style="background: var(--bg-main); text-align: left;">
-                            <th style="padding: 10px;">Day</th>
-                            <th style="padding: 10px;">Subject</th>
-                            <th style="padding: 10px;">Target Topics</th>
-                            <th style="padding: 10px;">Status</th>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Today</td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);"><strong>Polity</strong></td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Fundamental Rights, DPSP, Basic Structure</td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border); color: var(--accent);"><i class="fas fa-spinner"></i> In Progress</td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Tomorrow</td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);"><strong>CSAT</strong></td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Time & Work, Syllogism, Reading Comp</td>
-                            <td style="padding: 10px; border-bottom: 1px solid var(--border); color: var(--text-muted);">Upcoming</td>
-                        </tr>
-                    </table>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="font-size: 20px; color: var(--text-dark);">Current Phase: Prelims Focus</h3>
+                            <p class="text-muted mt-2" style="font-size: 14px;">Your algorithmic schedule based on the remaining syllabus. Use the Mock Test engine to track mastery.</p>
+                        </div>
+                        <span style="background: #e0e7ff; color: var(--primary-light); padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;"><i class="fas fa-shield-alt"></i> Secure Mode Active</span>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 600px;">
+                            <tr style="background: #f8fafc; text-align: left; border-bottom: 2px solid var(--border);">
+                                <th style="padding: 16px; color: var(--text-muted); font-weight: 600; font-size: 14px;">Day</th>
+                                <th style="padding: 16px; color: var(--text-muted); font-weight: 600; font-size: 14px;">Subject</th>
+                                <th style="padding: 16px; color: var(--text-muted); font-weight: 600; font-size: 14px;">Target Topics</th>
+                                <th style="padding: 16px; color: var(--text-muted); font-weight: 600; font-size: 14px;">Status</th>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s; hover: background: #f8fafc;">
+                                <td style="padding: 16px; font-weight: 500;">Today</td>
+                                <td style="padding: 16px; color: var(--primary); font-weight: 600;">Polity</td>
+                                <td style="padding: 16px; color: var(--text-muted);">Fundamental Rights, DPSP, Basic Structure</td>
+                                <td style="padding: 16px; color: var(--accent); font-weight: 600;"><i class="fas fa-circle-notch fa-spin"></i> In Progress</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 16px; font-weight: 500;">Tomorrow</td>
+                                <td style="padding: 16px; color: var(--primary); font-weight: 600;">CSAT</td>
+                                <td style="padding: 16px; color: var(--text-muted);">Time & Work, Syllogism, Reading Comp</td>
+                                <td style="padding: 16px; color: var(--text-muted); font-weight: 500;"><i class="far fa-clock"></i> Upcoming</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- 2. PERFECT NOTES -->
             <div id="notes" class="view">
-                <h2>Subject Notes & Methodologies</h2>
-                <div class="card mt-3">
-                    <h3 style="color: var(--primary);">CSAT: Time, Speed & Distance</h3>
-                    <p class="text-muted" style="font-size: 14px; margin: 10px 0;">Perfect mathematical solutions to avoid negative marking.</p>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--secondary);">
-                        <strong>Concept: Relative Speed</strong><br><br>
-                        <strong>1. Objects moving in SAME direction:</strong> Relative Speed = (S1 - S2)<br>
-                        <strong>2. Objects moving in OPPOSITE direction:</strong> Relative Speed = (S1 + S2)<br><br>
-                        <strong>Perfect Solution Method for Train Problems:</strong><br>
-                        Always convert km/hr to m/s by multiplying by (5/18). If a train crosses a platform/bridge, Total Distance = Length of Train + Length of Platform. Formula: Total Distance = Relative Speed × Time.
+                <div style="display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                    <div class="card" style="margin-bottom: 0;">
+                        <h3 style="color: var(--primary); font-size: 18px; margin-bottom: 12px;">CSAT: Time, Speed & Distance</h3>
+                        <p class="text-muted" style="font-size: 14px; margin-bottom: 16px;">Perfect mathematical solutions to avoid negative marking.</p>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 4px solid var(--secondary); font-size: 14px; line-height: 1.6;">
+                            <strong style="color: var(--text-dark);">Concept: Relative Speed</strong><br><br>
+                            <span style="color: var(--text-muted);">1. Objects moving in SAME direction:</span> <strong>Relative Speed = (S1 - S2)</strong><br>
+                            <span style="color: var(--text-muted);">2. Objects moving in OPPOSITE direction:</span> <strong>Relative Speed = (S1 + S2)</strong><br><br>
+                            <strong style="color: var(--text-dark);">Perfect Solution Method for Train Problems:</strong><br>
+                            Always convert km/hr to m/s by multiplying by (5/18). If a train crosses a platform/bridge, Total Distance = Length of Train + Length of Platform. Formula: Total Distance = Relative Speed × Time.
+                        </div>
                     </div>
-                </div>
-                <div class="card mt-3">
-                    <h3 style="color: var(--primary);">Polity: Constitutional Bodies</h3>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid var(--secondary);">
-                        <strong>Election Commission of India (ECI) - Article 324</strong><br><br>
-                        - Multi-member body (Chief Election Commissioner + 2 Election Commissioners).<br>
-                        - Appointed by the President. Removals of CEC are similar to a Supreme Court Judge.<br>
-                        - <strong>UPSC Trap:</strong> State Election Commissions are separate entities and conduct Panchayat/Municipal elections, NOT state legislative elections.
+                    <div class="card" style="margin-bottom: 0;">
+                        <h3 style="color: var(--primary); font-size: 18px; margin-bottom: 12px;">Polity: Constitutional Bodies</h3>
+                        <p class="text-muted" style="font-size: 14px; margin-bottom: 16px;">Core concepts for GS Paper 2 and Prelims.</p>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 4px solid var(--secondary); font-size: 14px; line-height: 1.6;">
+                            <strong style="color: var(--text-dark);">Election Commission of India (ECI) - Article 324</strong><br><br>
+                            • Multi-member body (Chief Election Commissioner + 2 Election Commissioners).<br>
+                            • Appointed by the President. Removals of CEC are similar to a Supreme Court Judge.<br><br>
+                            <strong style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> UPSC Trap:</strong><br>
+                            State Election Commissions are separate entities created by 73rd/74th amendments and conduct Panchayat/Municipal elections, NOT state legislative elections.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -182,49 +236,65 @@
             <!-- 3. MOCK TESTS (NON-REPEATING, SECURE) -->
             <div id="mock-test" class="view">
                 <div id="test-setup">
-                    <div class="card" style="text-align: center; padding: 40px;">
-                        <h2>Configure Exam Environment</h2>
-                        <p class="text-muted" style="margin: 10px 0;">Questions are drawn from a non-repeating database. Tab-switching is monitored.</p>
-                        
-                        <select id="test-subject" style="padding: 10px; width: 250px; border-radius: 6px; border: 1px solid var(--border); margin-top: 15px;">
-                            <option value="Polity">Indian Polity</option>
-                            <option value="Economy">Economy</option>
-                            <option value="CSAT">CSAT (Math & Reasoning)</option>
-                            <option value="History">Modern History</option>
-                        </select>
-
-                        <div style="display: flex; justify-content: center; margin-top: 20px;">
-                            <div class="difficulty-selector">
-                                <button class="diff-btn easy active" onclick="testEngine.setDiff('easy')">Easy</button>
-                                <button class="diff-btn medium" onclick="testEngine.setDiff('medium')">Medium</button>
-                                <button class="diff-btn tough" onclick="testEngine.setDiff('tough')">Tough (UPSC Standard)</button>
-                            </div>
+                    <div class="card" style="text-align: center; padding: 60px 20px; max-width: 800px; margin: 0 auto;">
+                        <div style="width: 80px; height: 80px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--primary-light); font-size: 32px;">
+                            <i class="fas fa-laptop-code"></i>
                         </div>
+                        <h2 style="font-size: 28px; margin-bottom: 12px; color: var(--text-dark);">Configure Exam Environment</h2>
+                        <p class="text-muted" style="margin-bottom: 30px; font-size: 16px; max-width: 500px; margin-left: auto; margin-right: auto;">Questions are drawn from a comprehensive, non-repeating database. Strict tab-switching monitoring is enabled.</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px; margin: 0 auto;">
+                            <div style="text-align: left;">
+                                <label style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: block;">Select Subject Area</label>
+                                <select id="test-subject" style="padding: 14px; width: 100%; border-radius: 8px; border: 2px solid var(--border); background: #f8fafc; font-size: 16px; outline: none; cursor: pointer;">
+                                    <option value="Polity">Indian Polity & Governance</option>
+                                    <option value="Economy">Indian Economy</option>
+                                    <option value="CSAT">CSAT (Aptitude & Reasoning)</option>
+                                    <option value="History">Modern Indian History</option>
+                                </select>
+                            </div>
 
-                        <button class="btn" style="margin-top: 20px; font-size: 18px; padding: 12px 30px;" onclick="testEngine.startTest()"><i class="fas fa-play"></i> Initialize Secure Exam</button>
+                            <div style="text-align: left;">
+                                <label style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; display: block;">Select Difficulty Level</label>
+                                <div class="difficulty-selector" style="margin: 0; justify-content: space-between;">
+                                    <button class="diff-btn easy active" onclick="testEngine.setDiff('easy')" style="flex: 1; padding: 12px 10px;">Easy</button>
+                                    <button class="diff-btn medium" onclick="testEngine.setDiff('medium')" style="flex: 1; padding: 12px 10px;">Medium</button>
+                                    <button class="diff-btn tough" onclick="testEngine.setDiff('tough')" style="flex: 1; padding: 12px 10px;">Tough</button>
+                                </div>
+                            </div>
+
+                            <button class="btn" style="margin-top: 20px; font-size: 18px; padding: 16px; width: 100%; border-radius: 12px;" onclick="testEngine.startTest()">
+                                <i class="fas fa-play-circle" style="font-size: 20px;"></i> Initialize Secure Exam
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div id="active-test" style="display: none;">
-                    <div class="card">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span style="font-weight: bold; color: var(--danger);" id="timer-text"><i class="fas fa-clock"></i> 60:00 Remaining</span>
-                            <span class="diff-btn tough active" id="current-diff-badge" style="font-size: 12px; padding: 4px 10px;"></span>
+                <div id="active-test" style="display: none; max-width: 900px; margin: 0 auto;">
+                    <div class="card" style="padding: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-weight: 700; color: var(--danger); font-size: 18px; display: flex; align-items: center; gap: 8px;" id="timer-text">
+                                <i class="fas fa-clock fa-pulse"></i> 60:00 Remaining
+                            </span>
+                            <span class="diff-btn tough active" id="current-diff-badge" style="font-size: 12px; padding: 6px 12px; text-transform: uppercase; letter-spacing: 1px;"></span>
                         </div>
                         <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
 
-                        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                            <span style="font-size: 12px; color: var(--text-muted); font-weight: bold;" id="q-subject">SUBJECT</span>
-                            <span style="font-size: 12px; color: var(--text-muted);" id="q-remaining">Questions Left in Bank: 0</span>
+                        <div style="display: flex; justify-content: space-between; margin-top: 24px; border-bottom: 2px solid var(--bg-body); padding-bottom: 12px; margin-bottom: 24px;">
+                            <span style="font-size: 14px; color: var(--primary-light); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;" id="q-subject">SUBJECT</span>
+                            <span style="font-size: 13px; color: var(--text-muted); font-weight: 600; background: #f1f5f9; padding: 4px 12px; border-radius: 20px;" id="q-remaining">Questions Left: 0</span>
                         </div>
                         
-                        <h3 id="question-text" style="line-height: 1.6; margin: 15px 0;">Loading question...</h3>
-                        <div id="options-container"></div>
+                        <h3 id="question-text" style="line-height: 1.7; margin-bottom: 30px; font-size: 18px; color: var(--text-dark); font-weight: 600; white-space: pre-wrap;">Loading question...</h3>
+                        
+                        <div id="options-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
 
                         <div id="solution-container" class="solution-box">
-                            <h4 id="solution-title"></h4>
-                            <p id="solution-text" style="margin-top: 10px; line-height: 1.6; color: var(--text-dark);"></p>
-                            <button class="btn" style="margin-top: 15px;" onclick="testEngine.nextQuestion()">Proceed to Next Question <i class="fas fa-arrow-right"></i></button>
+                            <h4 id="solution-title" style="font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;"></h4>
+                            <div id="solution-text" style="font-size: 15px; line-height: 1.7; color: var(--text-dark); background: white; padding: 16px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2);"></div>
+                            <button class="btn" style="margin-top: 20px; width: 100%; justify-content: center;" onclick="testEngine.nextQuestion()">
+                                Proceed to Next Question <i class="fas fa-arrow-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -232,25 +302,38 @@
 
             <!-- 4. LIVE PDF SUMMARIZER TOOL -->
             <div id="pdf-tool" class="view">
-                <h2>Live Document AI Summarizer</h2>
-                <div class="card mt-3">
-                    <div class="upload-area" id="pdf-upload-area" onclick="document.getElementById('pdf-upload').click()">
-                        <i class="fas fa-file-pdf" style="font-size: 40px; color: var(--danger); margin-bottom: 15px;"></i>
-                        <h3>Upload UPSC PDF Material</h3>
-                        <p class="text-muted" style="margin-bottom: 15px;">The Javascript engine extracts text locally, sends it to Gemini API, and generates a structured summary and revision notes.</p>
-                        <input type="file" id="pdf-upload" style="display: none;" accept="application/pdf">
-                        <button class="btn">Browse PDF File</button>
-                    </div>
-                    
-                    <div id="pdf-processing" style="display: none; margin-top: 20px; padding: 20px; text-align: center;">
-                        <div class="loader"></div>
-                        <h4 style="color: var(--primary); margin-top: 10px;">Analyzing Document with Gemini AI...</h4>
-                        <p style="font-size: 14px; color: var(--text-muted);">Please wait. Large PDFs take a moment to process.</p>
+                <div class="card" style="max-width: 800px; margin: 0 auto; padding: 40px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="font-size: 26px; color: var(--text-dark); margin-bottom: 10px;">Live Document AI Summarizer</h2>
+                        <p class="text-muted">Upload any UPSC study material or syllabus PDF. Our local engine extracts the text and uses Gemini AI to generate a concise, structured summary.</p>
                     </div>
 
-                    <div id="pdf-results" style="display: none; margin-top: 20px;">
-                        <h3 style="color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">AI Summary & Notes</h3>
-                        <div id="pdf-summary-content" style="line-height: 1.6; white-space: pre-wrap; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border);"></div>
+                    <div class="upload-area" id="pdf-upload-area" onclick="document.getElementById('pdf-upload').click()">
+                        <div style="width: 80px; height: 80px; background: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--danger); font-size: 32px;">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 style="font-size: 20px; margin-bottom: 10px; color: var(--text-dark);">Click to Browse PDF Files</h3>
+                        <p class="text-muted" style="margin-bottom: 20px; font-size: 14px;">Maximum recommended length: 5 pages per extraction</p>
+                        <input type="file" id="pdf-upload" style="display: none;" accept="application/pdf">
+                        <button class="btn" onclick="event.stopPropagation(); document.getElementById('pdf-upload').click();">Select File</button>
+                    </div>
+                    
+                    <div id="pdf-processing" style="display: none; margin-top: 30px; padding: 40px 20px; text-align: center; background: #f8fafc; border-radius: 16px; border: 1px solid var(--border);">
+                        <div class="loader"></div>
+                        <h4 style="color: var(--primary-light); font-size: 18px; margin-top: 15px; margin-bottom: 8px;">Analyzing Document with Gemini AI...</h4>
+                        <p style="font-size: 14px; color: var(--text-muted);">Extracting text vectors and structuring core arguments. Please wait.</p>
+                    </div>
+
+                    <div id="pdf-results" style="display: none; margin-top: 30px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 15px;">
+                            <h3 style="color: var(--primary); font-size: 22px; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-bolt" style="color: var(--accent);"></i> AI Summary & Notes
+                            </h3>
+                            <button class="btn btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="document.getElementById('pdf-results').style.display='none'; document.getElementById('pdf-upload-area').style.display='block';">
+                                Analyze Another
+                            </button>
+                        </div>
+                        <div id="pdf-summary-content" style="line-height: 1.8; font-size: 15px; color: var(--text-dark); background: #f8fafc; padding: 24px; border-radius: 12px; border: 1px solid var(--border);"></div>
                     </div>
                 </div>
             </div>
@@ -261,16 +344,25 @@
     <!-- LIVE GEMINI AI ASSISTANT -->
     <div id="ai-assistant">
         <div class="ai-header" onclick="document.getElementById('ai-body-container').style.display = document.getElementById('ai-body-container').style.display === 'none' ? 'flex' : 'none'">
-            <span><i class="fas fa-robot"></i> Live Gemini Mentor</span>
-            <i class="fas fa-chevron-up"></i>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <span>Gemini AI Mentor</span>
+            </div>
+            <i class="fas fa-chevron-up" style="font-size: 14px; opacity: 0.8;"></i>
         </div>
         <div id="ai-body-container" style="display: flex; flex-direction: column;">
             <div class="ai-body" id="chat-window">
-                <div class="ai-chat-bubble bot">Hello! I am connected to the live Gemini 2.5 AI. Ask me to clear doubts, explain UPSC concepts, or provide math solutions!</div>
+                <div class="ai-chat-bubble bot">
+                    <strong>Welcome!</strong> 👋<br>I am your live Gemini 2.5 AI mentor. Ask me to clear doubts, explain complex UPSC concepts, or provide detailed mathematical solutions!
+                </div>
             </div>
             <div class="ai-input-area">
-                <input type="text" id="ai-input" placeholder="Ask Gemini..." onkeypress="if(event.key === 'Enter') geminiEngine.sendChatMessage()">
-                <button style="margin-left: 10px; color: var(--secondary); font-size: 20px;" onclick="geminiEngine.sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="ai-input" placeholder="Type your doubt here..." onkeypress="if(event.key === 'Enter') geminiEngine.sendChatMessage()">
+                <button class="ai-send-btn" onclick="geminiEngine.sendChatMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -292,15 +384,40 @@
                 document.getElementById(id).classList.add('active');
                 event.currentTarget.classList.add('active');
                 
-                const titles = {'study-plan':'Structured Study Plan','notes':'Perfect Methodologies','mock-test':'Secure Mock Tests','pdf-tool':'Live Document AI Summarizer'};
+                // Close mobile sidebar on navigation
+                document.getElementById('sidebar').classList.remove('open');
+                
+                const titles = {
+                    'study-plan': 'Structured Study Plan',
+                    'notes': 'Subject Methodologies',
+                    'mock-test': 'Secure Examination Engine',
+                    'pdf-tool': 'Document Intelligence Tool'
+                };
                 document.getElementById('header-title').innerText = titles[id];
+            },
+            
+            resetProgress: function() {
+                if(confirm("Are you sure you want to clear your solved question history? This will allow you to see previous mock test questions again.")) {
+                    localStorage.removeItem('upsc_solved_ids');
+                    state.solvedIds = [];
+                    document.getElementById('solved-count').innerText = "0";
+                    alert("Progress successfully reset!");
+                    
+                    // If in test setup, UI resets naturally. If in active test, end it to prevent bugs.
+                    if(document.getElementById('active-test').style.display === 'block') {
+                        document.getElementById('active-test').style.display = 'none';
+                        document.getElementById('test-setup').style.display = 'block';
+                        testEngine.isTestActive = false;
+                        clearInterval(testEngine.timerInterval);
+                    }
+                }
             }
         };
 
         // --- 2. LIVE GEMINI API ENGINE ---
         const geminiEngine = {
             async callGemini(promptText, systemInstruction = "") {
-                if(!apiKey) return "Error: API Key is missing. Environment did not inject it.";
+                if(!apiKey) return "Error: The API key has not been injected by the environment. AI functions require the key to be set at runtime.";
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 
                 const payload = {
@@ -308,7 +425,7 @@
                     systemInstruction: { parts: [{ text: systemInstruction }] }
                 };
 
-                // Implement Exponential Backoff for stability
+                // Implement Exponential Backoff
                 const delays = [1000, 2000, 4000, 8000, 16000];
                 for (let i = 0; i < delays.length; i++) {
                     try {
@@ -321,9 +438,9 @@
                         if(data.candidates && data.candidates[0].content.parts[0].text) {
                             return data.candidates[0].content.parts[0].text;
                         }
-                        throw new Error("Invalid API response structure");
+                        throw new Error("Invalid API response structure. Please check quotas.");
                     } catch (error) {
-                        if (i === delays.length - 1) return `API Error after retries: ${error.message}`;
+                        if (i === delays.length - 1) return `API Error after multiple retries: ${error.message}`;
                         await new Promise(resolve => setTimeout(resolve, delays[i]));
                     }
                 }
@@ -340,17 +457,17 @@
                 
                 // Add typing indicator
                 const typingId = 'typing-' + Date.now();
-                chat.innerHTML += `<div id="${typingId}" class="ai-chat-bubble bot"><i class="fas fa-ellipsis-h fa-fade"></i></div>`;
+                chat.innerHTML += `<div id="${typingId}" class="ai-chat-bubble bot" style="color: var(--text-muted);"><i class="fas fa-circle-notch fa-spin"></i> Generating response...</div>`;
                 chat.scrollTop = chat.scrollHeight;
 
-                const systemPrompt = "You are an expert UPSC Civil Services mentor. Provide highly accurate, concise, and structured answers to clear doubts. Focus on facts, supreme court cases, constitutional articles, or exact mathematical formulas. Keep responses under 150 words.";
+                const systemPrompt = "You are an elite expert UPSC Civil Services mentor. Provide highly accurate, concise, and structured answers to clear student doubts. Focus intensely on facts, Supreme Court cases, constitutional articles, or exact mathematical formulas. Keep responses under 150 words and use markdown for bolding key terms.";
                 
                 const aiResponse = await this.callGemini(text, systemPrompt);
                 
                 document.getElementById(typingId).remove();
                 
                 // Convert Markdown basic bolding to HTML
-                const formattedResponse = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+                const formattedResponse = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>');
                 
                 chat.innerHTML += `<div class="ai-chat-bubble bot">${formattedResponse}</div>`;
                 chat.scrollTop = chat.scrollHeight;
@@ -374,7 +491,7 @@
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 
                 let extractedText = "";
-                // Extract text from the first 5 pages (to avoid huge token limits)
+                // Extract text from the first 5 pages max to avoid token limit errors
                 const pagesToRead = Math.min(pdf.numPages, 5); 
                 
                 for (let i = 1; i <= pagesToRead; i++) {
@@ -383,40 +500,55 @@
                     extractedText += textContent.items.map(item => item.str).join(" ") + "\n";
                 }
 
-                if(!extractedText.trim()) throw new Error("Could not extract text from the PDF.");
+                if(!extractedText.trim()) throw new Error("Could not extract any readable text from the provided PDF.");
 
                 // 2. Send extracted text to Gemini API
-                const prompt = `Please summarize the following extracted text from a UPSC study material. Provide: \n1. Core Theme\n2. Key Facts/Articles/Dates\n3. A short summary.\n\nExtracted Text:\n${extractedText.substring(0, 15000)}`; // Limit char to avoid overflow
+                const prompt = `Analyze and summarize the following text extracted from a UPSC study material PDF. Provide the output in a clean, professional structure including:\n1. **Core Theme:**\n2. **Key Facts/Articles/Dates:** (Bullet points)\n3. **Brief Analytical Summary:**\n\nExtracted Text Data:\n${extractedText.substring(0, 15000)}`; 
                 
-                const summary = await geminiEngine.callGemini(prompt, "You are a precise summarizer for UPSC students.");
+                const summary = await geminiEngine.callGemini(prompt, "You are a precise, analytical summarizer for UPSC IAS aspirants. Output strictly using the requested structure with markdown.");
 
                 // 3. Display Results
                 document.getElementById('pdf-processing').style.display = 'none';
                 document.getElementById('pdf-results').style.display = 'block';
                 
-                const formattedSummary = summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                // Basic markdown parser for display
+                const formattedSummary = summary
+                    .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--primary);">$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+                    
                 document.getElementById('pdf-summary-content').innerHTML = formattedSummary;
                 
             } catch (error) {
-                alert("Error processing PDF: " + error.message);
+                alert("Error processing PDF document: " + error.message);
                 document.getElementById('pdf-upload-area').style.display = 'block';
                 document.getElementById('pdf-processing').style.display = 'none';
             }
         });
 
-        // --- 4. NON-REPEATING MOCK TEST ENGINE & QUESTION BANK ---
-        // Seed bank. To reach 1000+, paste your JSON array objects here. 
-        // The tracking logic guarantees zero repetition.
+        // --- 4. NON-REPEATING MOCK TEST ENGINE & COMPREHENSIVE QUESTION BANK ---
+        // Seeded with a complete matrix to ensure no dead-ends during initial testing
         const db = [
+            // POLITY
             { id: "P1", subject: 'Polity', diff: 'tough', q: "Consider the following regarding the 'Basic Structure' doctrine:\n1. It is explicitly defined in the Constitution.\n2. The power of Judicial Review is part of it.\nWhich is correct?", options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"], ansIndex: 1, exp: "Perfect Solution: The Basic Structure doctrine is a judicial innovation (Kesavananda Bharati, 1973), so it is NOT explicitly written in the Constitution. Judicial Review is a core pillar of this structure (Minerva Mills case). Therefore, only statement 2 is correct." },
-            { id: "P2", subject: 'Polity', diff: 'easy', q: "Which Article of the Constitution of India safeguards one's right to marry the person of one's choice?", options: ["Article 19", "Article 21", "Article 25", "Article 29"], ansIndex: 1, exp: "Perfect Solution: In the Hadiya case (Shafin Jahan v. Asokan K.M., 2018), the Supreme Court held that the right to marry a person of one's choice is integral to Article 21 (Right to Life and Liberty)." },
-            { id: "P3", subject: 'Polity', diff: 'medium', q: "The Ninth Schedule was introduced in the Constitution of India during the prime ministership of:", options: ["Jawaharlal Nehru", "Lal Bahadur Shastri", "Indira Gandhi", "Morarji Desai"], ansIndex: 0, exp: "Perfect Solution: The 9th Schedule was added by the First Amendment Act of 1951 to protect land reform laws from judicial review. Jawaharlal Nehru was the Prime Minister." },
-            { id: "E1", subject: 'Economy', diff: 'tough', q: "If the RBI decides to adopt an expansionist monetary policy, which of the following would it not do?\n1. Cut and optimize the Statutory Liquidity Ratio\n2. Increase the Marginal Standing Facility Rate\n3. Cut the Bank Rate and Repo Rate", options: ["1 and 2 only", "2 only", "1 and 3 only", "1, 2 and 3"], ansIndex: 1, exp: "Perfect Solution: Expansionary policy aims to increase money supply. Cutting SLR, Bank Rate, and Repo rate increases money supply. However, INCREASING the MSF rate makes borrowing expensive, reducing money supply. Therefore, they would NOT do 2." },
-            { id: "E2", subject: 'Economy', diff: 'medium', q: "With reference to the Indian economy, demand-pull inflation can be caused/increased by which of the following?\n1. Expansionary policies\n2. Fiscal stimulus\n3. Inflation-indexing wages\n4. Higher purchasing power\n5. Rising interest rates", options: ["1, 2 and 4 only", "2, 3 and 5 only", "1, 3, 4 and 5 only", "1, 2, 3, 4 and 5"], ansIndex: 0, exp: "Perfect Solution: Demand-pull inflation occurs when demand outpaces supply. Expansionary policies, fiscal stimulus, and higher purchasing power increase demand. Rising interest rates decrease demand. Inflation-indexing wages is a response to inflation, not a primary demand-pull cause." },
+            { id: "P2", subject: 'Polity', diff: 'easy', q: "Which Article of the Constitution of India safeguards one's right to marry the person of one's choice?", options: ["Article 19", "Article 21", "Article 25", "Article 29"], ansIndex: 1, exp: "Perfect Solution: In the Hadiya case (Shafin Jahan v. Asokan K.M., 2018), the Supreme Court held that the right to marry a person of one's choice is integral to Article 21 (Right to Life and Personal Liberty)." },
+            { id: "P3", subject: 'Polity', diff: 'medium', q: "The Ninth Schedule was introduced in the Constitution of India during the prime ministership of:", options: ["Jawaharlal Nehru", "Lal Bahadur Shastri", "Indira Gandhi", "Morarji Desai"], ansIndex: 0, exp: "Perfect Solution: The 9th Schedule was added by the First Amendment Act of 1951 to protect land reform laws from judicial review. Jawaharlal Nehru was the Prime Minister at the time." },
+            
+            // ECONOMY
+            { id: "E1", subject: 'Economy', diff: 'tough', q: "If the RBI decides to adopt an expansionist monetary policy, which of the following would it NOT do?\n1. Cut and optimize the Statutory Liquidity Ratio (SLR)\n2. Increase the Marginal Standing Facility (MSF) Rate\n3. Cut the Bank Rate and Repo Rate", options: ["1 and 2 only", "2 only", "1 and 3 only", "1, 2 and 3"], ansIndex: 1, exp: "Perfect Solution: Expansionary policy aims to increase money supply in the market. Cutting SLR, Bank Rate, and Repo rate achieves this. However, INCREASING the MSF rate makes borrowing more expensive, reducing money supply. Therefore, they would NOT do step 2." },
+            { id: "E2", subject: 'Economy', diff: 'medium', q: "With reference to the Indian economy, demand-pull inflation can be caused/increased by which of the following?\n1. Expansionary policies\n2. Fiscal stimulus\n3. Inflation-indexing wages\n4. Higher purchasing power\n5. Rising interest rates", options: ["1, 2 and 4 only", "2, 3 and 5 only", "1, 3, 4 and 5 only", "1, 2, 3, 4 and 5"], ansIndex: 0, exp: "Perfect Solution: Demand-pull inflation occurs when aggregate demand outpaces supply. Expansionary policies, fiscal stimulus, and higher purchasing power directly increase demand. Rising interest rates decrease demand (contractionary). Inflation-indexing wages is a response to inflation, not a primary demand-pull cause." },
+            { id: "E3", subject: 'Economy', diff: 'easy', q: "The term 'Repo Rate' refers to the rate at which:", options: ["Commercial banks lend to the public", "RBI lends to commercial banks for short-term", "RBI borrows from commercial banks", "Commercial banks lend to corporate entities"], ansIndex: 1, exp: "Perfect Solution: Repo Rate (Repurchase Agreement Rate) is the rate at which the Reserve Bank of India lends money to commercial banks to meet short-term liquidity needs." },
+            
+            // CSAT
             { id: "C1", subject: 'CSAT', diff: 'medium', q: "A train running at 72 km/hr crosses a 200m platform in 20 seconds. What is the length of the train?", options: ["100m", "150m", "200m", "250m"], ansIndex: 2, exp: "Perfect Solution Methodology:<br>1. Convert speed: 72 km/hr = 72 * (5/18) = 20 m/s.<br>2. Distance covered in 20s = Speed × Time = 20 × 20 = 400m.<br>3. Total distance = Train Length + Platform Length. (400 = Train + 200).<br>4. Therefore, Train Length = 200m." },
-            { id: "C2", subject: 'CSAT', diff: 'tough', q: "If today is Sunday, what will be the day of the week exactly 100 days from today?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], ansIndex: 1, exp: "Perfect Solution Methodology:<br>1. A week has 7 days. We find the remainder of days.<br>2. Divide 100 by 7: 100 / 7 = 14 weeks and remainder 2 days.<br>3. Add 2 odd days to Sunday: Sunday + 2 = Tuesday." },
-            { id: "H1", subject: 'History', diff: 'medium', q: "In the context of Indian history, the Rakhmabai case of 1884 revolved around:\n1. Women's right to gain education\n2. Age of consent\n3. Restitution of conjugal rights", options: ["1 and 2 only", "2 and 3 only", "1 and 3 only", "1, 2 and 3"], ansIndex: 1, exp: "Perfect Solution: The famous Rakhmabai case (1884) was a landmark legal case involving child marriage (Age of consent) and the forced restitution of conjugal rights. It did not directly deal with educational rights." }
-            // To scale: Copy-paste your 1000 JSON questions here.
+            { id: "C2", subject: 'CSAT', diff: 'tough', q: "If today is Sunday, what will be the day of the week exactly 100 days from today?", options: ["Monday", "Tuesday", "Wednesday", "Thursday"], ansIndex: 1, exp: "Perfect Solution Methodology:<br>1. A week has 7 days. We find the remainder of days to determine odd days.<br>2. Divide 100 by 7: 100 / 7 = 14 weeks with a remainder of 2 days.<br>3. Add 2 odd days to Sunday: Sunday + 2 = Tuesday." },
+            { id: "C3", subject: 'CSAT', diff: 'easy', q: "If the cost price of 15 articles is equal to the selling price of 10 articles, what is the profit percentage?", options: ["25%", "33.33%", "50%", "75%"], ansIndex: 2, exp: "Perfect Solution Methodology:<br>Let CP of 1 article = ₹1.<br>Then CP of 10 articles = ₹10.<br>SP of 10 articles = CP of 15 articles = ₹15.<br>Profit = SP - CP = 15 - 10 = ₹5.<br>Profit % = (Profit/CP) × 100 = (5/10) × 100 = 50%." },
+
+            // HISTORY
+            { id: "H1", subject: 'History', diff: 'medium', q: "In the context of Indian history, the Rakhmabai case of 1884 revolved around:\n1. Women's right to gain education\n2. Age of consent\n3. Restitution of conjugal rights", options: ["1 and 2 only", "2 and 3 only", "1 and 3 only", "1, 2 and 3"], ansIndex: 1, exp: "Perfect Solution: The famous Rakhmabai case (1884) was a landmark legal controversy involving child marriage (Age of consent) and the forced restitution of conjugal rights. It did not directly deal with educational rights." },
+            { id: "H2", subject: 'History', diff: 'tough', q: "Which of the following proposals were part of the 'August Offer' (1940)?\n1. Dominion status as the objective for India\n2. Expansion of Viceroy's Executive Council\n3. Setting up of a Constituent Assembly after the war\n4. Immediate transfer of power", options: ["1, 2 and 3 only", "1 and 2 only", "2, 3 and 4 only", "1, 2, 3 and 4"], ansIndex: 0, exp: "Perfect Solution: The August Offer proposed Dominion Status, expansion of the Viceroy's Executive Council to include more Indians, and the setting up of a Constituent Assembly post-WWII. It explicitly rejected any 'immediate transfer of power'." },
+            { id: "H3", subject: 'History', diff: 'easy', q: "The 'Champaran Satyagraha' (1917) was primarily associated with the issues faced by which class of workers?", options: ["Textile mill workers", "Indigo cultivators", "Railway workers", "Coal miners"], ansIndex: 1, exp: "Perfect Solution: The Champaran Satyagraha in Bihar was Mahatma Gandhi's first active involvement in Indian freedom politics, initiated to protest the oppressive Tinkathia system imposed on Indigo cultivators by European planters." }
+            // To scale further: Continue adding objects following this schema.
         ];
 
         const testEngine = {
@@ -435,11 +567,11 @@
             startTest: function() {
                 const subj = document.getElementById('test-subject').value;
                 
-                // CRITICAL LOGIC: Filter out already solved questions
+                // Filter logic: Match Subject AND Difficulty, exclude already solved
                 this.pool = db.filter(q => q.subject === subj && q.diff === this.difficulty && !state.solvedIds.includes(q.id));
                 
                 if(this.pool.length === 0) {
-                    alert("You have solved all available questions for this Subject and Difficulty! Please select a different criteria or reset your data.");
+                    alert(`No questions available for ${subj} at ${this.difficulty.toUpperCase()} difficulty. You may have solved them all. Please reset your progress using the button in the header, or select a different category.`);
                     return;
                 }
 
@@ -450,7 +582,7 @@
                 document.getElementById('test-setup').style.display = 'none';
                 document.getElementById('active-test').style.display = 'block';
                 
-                this.startTimer(60 * 60); // 1 hour test
+                this.startTimer(60 * 60); // 1 hour test duration
                 this.nextQuestion();
             },
 
@@ -470,25 +602,27 @@
                     timeLeft--;
                     const minutes = Math.floor(timeLeft / 60);
                     const seconds = timeLeft % 60;
-                    text.innerHTML = `<i class="fas fa-clock"></i> ${minutes}:${seconds < 10 ? '0':''}${seconds} Remaining`;
+                    text.innerHTML = `<i class="fas fa-clock fa-pulse"></i> ${minutes}:${seconds < 10 ? '0':''}${seconds} Remaining`;
                     bar.style.width = `${(timeLeft / totalSeconds) * 100}%`;
                     
                     if(timeLeft <= 0) {
                         clearInterval(this.timerInterval);
-                        alert("Time's Up!");
+                        alert("Time's Up! The exam has concluded.");
                         this.isTestActive = false;
+                        document.getElementById('test-setup').style.display = 'block';
+                        document.getElementById('active-test').style.display = 'none';
                     }
                 }, 1000);
             },
 
             nextQuestion: function() {
-                // Update Pool dynamically to reflect remaining questions
                 const subj = document.getElementById('test-subject').value;
                 this.pool = db.filter(q => q.subject === subj && q.diff === this.difficulty && !state.solvedIds.includes(q.id));
                 
                 if(this.pool.length === 0) {
-                    alert("Test Complete! You have solved all available questions in this category.");
+                    alert("Category Complete! You have successfully solved all available questions for this specific subject and difficulty level.");
                     this.isTestActive = false;
+                    clearInterval(this.timerInterval);
                     document.getElementById('test-setup').style.display = 'block';
                     document.getElementById('active-test').style.display = 'none';
                     return;
@@ -499,12 +633,12 @@
 
                 document.getElementById('solution-container').style.display = 'none';
                 document.getElementById('q-subject').innerText = `${this.currentQuestion.subject.toUpperCase()} (ID: ${this.currentQuestion.id})`;
-                document.getElementById('q-remaining').innerText = `Questions Left in Bank: ${this.pool.length}`;
+                document.getElementById('q-remaining').innerText = `Questions Left: ${this.pool.length}`;
                 document.getElementById('question-text').innerText = this.currentQuestion.q;
                 
                 const diffBadge = document.getElementById('current-diff-badge');
                 diffBadge.className = `diff-btn active ${this.currentQuestion.diff}`;
-                diffBadge.innerText = this.currentQuestion.diff.toUpperCase();
+                diffBadge.innerText = this.currentQuestion.diff;
 
                 const optsDiv = document.getElementById('options-container');
                 optsDiv.innerHTML = '';
@@ -513,7 +647,7 @@
                 this.currentQuestion.options.forEach((opt, index) => {
                     optsDiv.innerHTML += `
                         <div class="mcq-option" onclick="testEngine.checkAnswer(${index}, this)">
-                            <div style="width:30px; height:30px; border-radius:50%; background:var(--bg-main); display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">${labels[index]}</div>
+                            <div style="width:36px; height:36px; border-radius:50%; background: #f1f5f9; display:flex; align-items:center; justify-content:center; font-weight:700; color: var(--text-muted); flex-shrink:0;">${labels[index]}</div>
                             <div>${opt}</div>
                         </div>
                     `;
@@ -524,14 +658,18 @@
                 const isCorrect = selectedIndex === this.currentQuestion.ansIndex;
                 const allOptions = document.querySelectorAll('.mcq-option');
 
-                // Visual Feedback
+                // Visual Feedback lock
                 allOptions.forEach((opt, idx) => {
                     opt.classList.add('locked');
                     opt.onclick = null;
                     if(idx === this.currentQuestion.ansIndex) {
                         opt.classList.add('correct');
+                        opt.querySelector('div:first-child').style.background = '#d1fae5';
+                        opt.querySelector('div:first-child').style.color = '#064e3b';
                     } else if (idx === selectedIndex && !isCorrect) {
                         opt.classList.add('wrong');
+                        opt.querySelector('div:first-child').style.background = '#fee2e2';
+                        opt.querySelector('div:first-child').style.color = '#7f1d1d';
                     }
                 });
 
@@ -540,17 +678,19 @@
                 const solTitle = document.getElementById('solution-title');
                 
                 if(isCorrect) {
-                    solTitle.innerHTML = `<i class="fas fa-star" style="color:#f59e0b;"></i> Brilliant! Correct Answer.`;
+                    solTitle.innerHTML = `<i class="fas fa-star" style="color: var(--accent);"></i> Brilliant! Correct Answer.`;
                     solTitle.style.color = 'var(--success)';
                 } else {
-                    solTitle.innerHTML = `<i class="fas fa-times-circle" style="color:var(--danger);"></i> Incorrect. Review the perfect solution:`;
+                    solTitle.innerHTML = `<i class="fas fa-times-circle" style="color: var(--danger);"></i> Incorrect. Review the methodology:`;
                     solTitle.style.color = 'var(--danger)';
+                    solContainer.style.borderLeftColor = 'var(--danger)';
+                    solContainer.style.background = '#fef2f2';
                 }
                 
                 document.getElementById('solution-text').innerHTML = this.currentQuestion.exp;
                 solContainer.style.display = 'block';
 
-                // SAVE PROGRESS: Push ID to local storage so it never repeats
+                // SAVE PROGRESS: Push ID to local storage to prevent repetition
                 if (!state.solvedIds.includes(this.currentQuestion.id)) {
                     state.solvedIds.push(this.currentQuestion.id);
                     localStorage.setItem('upsc_solved_ids', JSON.stringify(state.solvedIds));
