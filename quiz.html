@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC MCQ Practice</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.quiz-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+.option{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    text-align:left;
+}
+
+#scoreBox{
+    font-size:20px;
+    font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<h1>UPSC MCQ Practice</h1>
+</header>
+
+<nav>
+<a href="index.html">Dashboard</a>
+<a href="syllabus.html">Syllabus</a>
+<a href="quiz.html">MCQ Practice</a>
+<a href="mains.html">Mains</a>
+<a href="currentaffairs.html">Current Affairs</a>
+<a href="planner.html">Planner</a>
+<a href="notes.html">Notes</a>
+</nav>
+
+<main>
+
+<div class="quiz-box">
+
+<h2 id="question"></h2>
+
+<button class="option" onclick="checkAnswer(0)" id="op0"></button>
+
+<button class="option" onclick="checkAnswer(1)" id="op1"></button>
+
+<button class="option" onclick="checkAnswer(2)" id="op2"></button>
+
+<button class="option" onclick="checkAnswer(3)" id="op3"></button>
+
+<br>
+
+<button onclick="nextQuestion()">Next Question</button>
+
+<p id="result"></p>
+
+</div>
+
+<div class="quiz-box">
+
+<h2>Your Score</h2>
+
+<p id="scoreBox">0</p>
+
+</div>
+
+</main>
+
+<footer>
+<p>UPSC Civil Services Preparation Portal</p>
+</footer>
+
+<script>
+
+const questions = [
+
+{
+question:"Who is known as the Father of the Indian Constitution?",
+options:[
+"Jawaharlal Nehru",
+"Dr. B.R. Ambedkar",
+"Sardar Patel",
+"Rajendra Prasad"
+],
+answer:1
+},
+
+{
+question:"Which Article guarantees Right to Equality?",
+options:[
+"Article 14",
+"Article 19",
+"Article 21",
+"Article 32"
+],
+answer:0
+},
+
+{
+question:"Capital of Kerala?",
+options:[
+"Kochi",
+"Thrissur",
+"Kozhikode",
+"Thiruvananthapuram"
+],
+answer:3
+},
+
+{
+question:"Largest planet in Solar System?",
+options:[
+"Earth",
+"Mars",
+"Jupiter",
+"Venus"
+],
+answer:2
+},
+
+{
+question:"Green Revolution is related to?",
+options:[
+"Agriculture",
+"Industry",
+"IT",
+"Space"
+],
+answer:0
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion(){
+
+let q = questions[currentQuestion];
+
+document.getElementById("question").innerHTML =
+q.question;
+
+document.getElementById("op0").innerHTML =
+q.options[0];
+
+document.getElementById("op1").innerHTML =
+q.options[1];
+
+document.getElementById("op2").innerHTML =
+q.options[2];
+
+document.getElementById("op3").innerHTML =
+q.options[3];
+}
+
+function checkAnswer(selected){
+
+let q = questions[currentQuestion];
+
+if(selected === q.answer){
+
+document.getElementById("result").innerHTML =
+"✅ Correct";
+
+score++;
+
+}else{
+
+document.getElementById("result").innerHTML =
+"❌ Wrong";
+}
+
+document.getElementById("scoreBox").innerHTML =
+score;
+
+localStorage.setItem(
+"quizScore",
+score
+);
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion >= questions.length){
+
+currentQuestion = 0;
+}
+
+document.getElementById("result").innerHTML = "";
+
+loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
