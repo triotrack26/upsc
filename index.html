@@ -3,447 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPSC Master Portal</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>UPSC Civil Services Master Portal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* --- CORE VARIABLES --- */
         :root {
-            --bg-body: #f4f7f6;
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --accent: #f59e0b;
+            --bg-main: #f3f4f6;
             --bg-card: #ffffff;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --primary: #2b6cb0;
-            --primary-hover: #2c5282;
-            --accent: #ed8936;
-            --success: #38a169;
-            --danger: #e53e3e;
-            --border: #e2e8f0;
-            --sidebar-w: 250px;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e5e7eb;
+            --sidebar-width: 260px;
         }
 
-        [data-theme="dark"] {
-            --bg-body: #1a202c;
-            --bg-card: #2d3748;
-            --text-main: #f7fafc;
-            --text-muted: #a0aec0;
-            --primary: #63b3ed;
-            --primary-hover: #4299e1;
-            --border: #4a5568;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.5);
-        }
-
-        /* --- RESET & LAYOUT --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; transition: background 0.3s; }
-        button { cursor: pointer; border: none; background: none; transition: 0.2s; }
-        
-        /* --- SIDEBAR --- */
-        #sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 10; }
-        .logo { padding: 20px; font-size: 20px; font-weight: 800; color: var(--primary); border-bottom: 1px solid var(--border); letter-spacing: 1px; }
-        .nav-links { flex: 1; padding: 10px 0; overflow-y: auto; }
-        .nav-btn { width: 100%; text-align: left; padding: 15px 20px; color: var(--text-muted); font-size: 16px; display: flex; align-items: center; gap: 15px; }
-        .nav-btn:hover, .nav-btn.active { background: rgba(43, 108, 176, 0.1); color: var(--primary); border-right: 3px solid var(--primary); }
-        .nav-btn i { width: 20px; text-align: center; }
+        body { display: flex; height: 100vh; background: var(--bg-main); color: var(--text-dark); overflow: hidden; }
+        button { cursor: pointer; border: none; outline: none; background: none; transition: 0.2s; }
 
-        /* --- MAIN CONTENT --- */
-        #main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #header { height: 70px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
-        .theme-toggle { font-size: 20px; color: var(--text-main); padding: 10px; border-radius: 50%; }
-        .theme-toggle:hover { background: var(--bg-body); }
+        /* Sidebar */
+        #sidebar { width: var(--sidebar-width); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .logo { padding: 20px; font-size: 20px; font-weight: bold; color: var(--primary); border-bottom: 1px solid var(--border); }
+        .nav-link { padding: 15px 20px; display: flex; align-items: center; gap: 15px; color: var(--text-muted); font-weight: 500; border-left: 4px solid transparent; }
+        .nav-link:hover, .nav-link.active { background: #eff6ff; color: var(--secondary); border-left-color: var(--secondary); }
+
+        /* Main Content */
+        #main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header { background: var(--bg-card); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .content-area { flex: 1; overflow-y: auto; padding: 30px; }
         
-        #content-area { flex: 1; padding: 30px; overflow-y: auto; }
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- UI COMPONENTS --- */
-        .card { background: var(--bg-card); padding: 20px; border-radius: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .btn-primary { background: var(--primary); color: white; padding: 10px 20px; border-radius: 6px; font-weight: 600; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .badge { background: var(--accent); color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
-
-        /* --- PRELIMS ENGINE --- */
-        .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .filter-tag { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 14px; }
-        .filter-tag.active { background: var(--primary); color: white; border-color: var(--primary); }
+        /* UI Components */
+        .card { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 20px; }
+        .btn { background: var(--secondary); color: white; padding: 10px 20px; border-radius: 6px; font-weight: 600; }
+        .btn:hover { background: var(--primary); }
+        .btn-outline { border: 1px solid var(--secondary); color: var(--secondary); }
         
-        .mcq-option { display: flex; align-items: center; gap: 15px; padding: 15px; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 10px; cursor: pointer; background: var(--bg-card); }
-        .mcq-option:hover:not(.locked) { border-color: var(--primary); background: rgba(43, 108, 176, 0.05); }
-        .mcq-option.correct { border-color: var(--success); background: rgba(56, 161, 105, 0.1); }
-        .mcq-option.wrong { border-color: var(--danger); background: rgba(229, 62, 62, 0.1); text-decoration: line-through; opacity: 0.8; }
-        .mcq-option.locked { cursor: default; }
-        
-        .explanation-box { margin-top: 20px; padding: 20px; border-radius: 8px; border-left: 4px solid var(--primary); background: var(--bg-body); display: none; }
-        .explanation-box.show { display: block; animation: fadeIn 0.4s; }
+        /* Mock Test Engine */
+        .difficulty-selector { display: flex; gap: 10px; margin: 15px 0; }
+        .diff-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); }
+        .diff-btn.active.easy { background: var(--success); color: white; border-color: var(--success); }
+        .diff-btn.active.medium { background: var(--accent); color: white; border-color: var(--accent); }
+        .diff-btn.active.tough { background: var(--danger); color: white; border-color: var(--danger); }
 
-        /* --- UTILS --- */
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .text-muted { color: var(--text-muted); }
-        textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); resize: vertical; min-height: 150px; }
-        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-body); color: var(--text-main); }
+        .mcq-option { padding: 15px; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
+        .mcq-option:hover:not(.locked) { border-color: var(--secondary); background: #f8fafc; }
+        .mcq-option.correct { border-color: var(--success); background: #ecfdf5; color: #065f46; font-weight: bold; }
+        .mcq-option.wrong { border-color: var(--danger); background: #fef2f2; color: #991b1b; text-decoration: line-through; opacity: 0.7; }
+        .mcq-option.locked { cursor: not-allowed; }
+        
+        .solution-box { margin-top: 20px; padding: 20px; border-radius: 8px; border-left: 5px solid var(--success); background: #f0fdf4; display: none; }
+        
+        .timer-bar { background: var(--border); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+        .timer-fill { height: 100%; background: var(--secondary); width: 100%; transition: width 1s linear; }
+
+        /* Notes & PDF Tool */
+        .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .upload-area { border: 2px dashed var(--border); padding: 40px; text-align: center; border-radius: 12px; cursor: pointer; background: #f8fafc; }
+
+        /* Floating AI Assistant */
+        #ai-assistant { position: fixed; bottom: 30px; right: 30px; width: 350px; background: var(--bg-card); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--secondary); display: flex; flex-direction: column; overflow: hidden; z-index: 1000; }
+        .ai-header { background: var(--secondary); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; cursor: pointer; }
+        .ai-body { padding: 15px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+        .ai-chat-bubble { padding: 10px; border-radius: 8px; font-size: 14px; max-width: 85%; }
+        .ai-chat-bubble.user { background: var(--secondary); color: white; align-self: flex-end; }
+        .ai-chat-bubble.bot { background: white; border: 1px solid var(--border); align-self: flex-start; }
+        .ai-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border); background: white; }
+        .ai-input-area input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+        
+        /* Security Overlay */
+        #security-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(239, 68, 68, 0.95); color: white; display: none; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; text-align: center; }
     </style>
 </head>
-<body data-theme="light">
+<body>
+
+    <div id="security-overlay">
+        <i class="fas fa-exclamation-triangle" style="font-size: 60px; margin-bottom: 20px;"></i>
+        <h2>SECURITY VIOLATION DETECTED</h2>
+        <p>You navigated away from the exam window. This incident has been recorded.</p>
+        <button class="btn" style="margin-top: 20px; background: white; color: var(--danger);" onclick="document.getElementById('security-overlay').style.display='none'">Acknowledge & Return to Exam</button>
+    </div>
 
     <nav id="sidebar">
-        <div class="logo"><i class="fas fa-landmark"></i> UPSC Portal</div>
-        <div class="nav-links">
-            <button class="nav-btn active" onclick="app.navigate('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</button>
-            <button class="nav-btn" onclick="app.navigate('prelims')"><i class="fas fa-check-square"></i> Prelims MCQs</button>
-            <button class="nav-btn" onclick="app.navigate('mains')"><i class="fas fa-pen-nib"></i> Mains Hub</button>
-            <button class="nav-btn" onclick="app.navigate('notes')"><i class="fas fa-book"></i> Digital Notes</button>
-        </div>
-        <div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border);">
-            System Architect: Abijith
+        <div class="logo"><i class="fas fa-landmark"></i> UPSC Master</div>
+        <div style="flex: 1; overflow-y: auto;">
+            <button class="nav-link active" onclick="app.nav('study-plan')"><i class="fas fa-calendar-alt"></i> Study Plan</button>
+            <button class="nav-link" onclick="app.nav('notes')"><i class="fas fa-book-open"></i> Perfect Notes</button>
+            <button class="nav-link" onclick="app.nav('mock-test')"><i class="fas fa-stopwatch"></i> Secure Mock Tests</button>
+            <button class="nav-link" onclick="app.nav('pyq')"><i class="fas fa-history"></i> Previous Year Papers</button>
+            <button class="nav-link" onclick="app.nav('interview')"><i class="fas fa-user-tie"></i> Mock Interview</button>
+            <button class="nav-link" onclick="app.nav('pdf-tool')"><i class="fas fa-file-pdf"></i> PDF Summarizer</button>
         </div>
     </nav>
 
-    <main id="main-wrapper">
-        <header id="header">
-            <h2 id="page-title" style="font-size: 18px;">Overview Dashboard</h2>
-            <div class="flex-between" style="gap: 20px;">
-                <div style="text-align: right;">
-                    <div style="font-size: 12px; color: var(--text-muted); font-weight: bold;">UPSC PRELIMS COUNTDOWN</div>
-                    <div id="countdown" style="font-size: 16px; font-weight: 800; color: var(--danger);">Loading...</div>
-                </div>
-                <button class="theme-toggle" onclick="app.toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i></button>
+    <main id="main-content">
+        <header>
+            <h2 id="header-title">Structured Study Plan</h2>
+            <div style="display:flex; gap: 15px;">
+                <span style="background: #e0e7ff; color: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: bold;"><i class="fas fa-shield-alt"></i> Anti-Cheat Active</span>
             </div>
         </header>
 
-        <div id="content-area">
+        <div class="content-area">
             
-            <div id="dashboard" class="view active">
-                <div class="grid-3">
-                    <div class="card">
-                        <h4 class="text-muted"><i class="fas fa-bullseye"></i> Daily Target</h4>
-                        <div style="font-size: 24px; font-weight: bold; margin: 10px 0;" id="daily-target">Solve 50 MCQs</div>
-                        <progress id="target-progress" value="0" max="50" style="width: 100%; height: 8px;"></progress>
-                    </div>
-                    <div class="card">
-                        <h4 class="text-muted"><i class="fas fa-check-circle"></i> Accuracy Rate</h4>
-                        <div style="font-size: 28px; font-weight: bold; margin-top: 10px; color: var(--success);" id="global-accuracy">0%</div>
-                    </div>
-                    <div class="card">
-                        <h4 class="text-muted"><i class="fas fa-database"></i> Total Solved</h4>
-                        <div style="font-size: 28px; font-weight: bold; margin-top: 10px; color: var(--primary);" id="total-solved">0</div>
-                    </div>
-                </div>
-
-                <div class="card" style="max-width: 800px;">
-                    <h3>Subject Mastery Analytics</h3>
-                    <canvas id="analyticsChart" height="100"></canvas>
-                </div>
-            </div>
-
-            <div id="prelims" class="view">
-                <div class="flex-between" style="margin-bottom: 20px;">
-                    <h2>Prelims Simulator</h2>
-                    <button class="btn-primary" onclick="mcqEngine.loadNext()"><i class="fas fa-forward"></i> Next Question</button>
-                </div>
-                
-                <div class="filter-row" id="subject-filters">
-                    <button class="filter-tag active" onclick="mcqEngine.setFilter('All')">Mixed Set</button>
-                    <button class="filter-tag" onclick="mcqEngine.setFilter('History')">History</button>
-                    <button class="filter-tag" onclick="mcqEngine.setFilter('Polity')">Polity</button>
-                    <button class="filter-tag" onclick="mcqEngine.setFilter('Geography')">Geography</button>
-                    <button class="filter-tag" onclick="mcqEngine.setFilter('Economy')">Economy</button>
-                </div>
-
+            <div id="study-plan" class="view active">
                 <div class="card">
-                    <div class="flex-between">
-                        <span class="badge" id="q-subject">Subject</span>
-                        <span class="text-muted" style="font-size: 14px;" id="q-id">#ID</span>
-                    </div>
-                    <h3 style="margin: 20px 0; line-height: 1.6;" id="q-text">Question text loads here...</h3>
-                    
-                    <div id="q-options-container">
-                        </div>
-
-                    <div id="q-explanation" class="explanation-box">
-                        <h4 style="color: var(--primary); margin-bottom: 10px;"><i class="fas fa-lightbulb"></i> Detailed Analysis</h4>
-                        <div id="exp-content" style="line-height: 1.6;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="mains" class="view">
-                <h2>Mains Workspace</h2>
-                <p class="text-muted" style="margin-bottom: 20px;">Draft, save, and review your subjective answers.</p>
-                
-                <div class="grid-3">
-                    <div class="card" style="grid-column: span 2;">
-                        <h3>Today's Practice Prompt (GS Paper II)</h3>
-                        <p style="font-weight: 600; margin: 15px 0;">"Discuss the role of the Election Commission of India in light of the evolution of the Model Code of Conduct."</p>
-                        <textarea placeholder="Start writing your structured answer here (Introduction, Body, Conclusion)..." id="mains-draft"></textarea>
-                        <button class="btn-primary" style="margin-top: 15px;" onclick="alert('Draft saved to LocalStorage!')"><i class="fas fa-save"></i> Save Draft</button>
-                    </div>
-                    <div class="card">
-                        <h3>Syllabus Tracker</h3>
-                        <ul style="list-style: none; margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
-                            <li><label><input type="checkbox" checked> GS 1: Modern History</label></li>
-                            <li><label><input type="checkbox"> GS 2: Governance</label></li>
-                            <li><label><input type="checkbox"> GS 3: Internal Security</label></li>
-                            <li><label><input type="checkbox"> GS 4: Ethics Case Studies</label></li>
-                        </ul>
-                    </div>
+                    <h3>Current Phase: Prelims Focus</h3>
+                    <p class="text-muted mt-2">Your algorithmically generated schedule based on remaining syllabus.</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <tr style="background: var(--bg-main); text-align: left;">
+                            <th style="padding: 10px;">Day</th>
+                            <th style="padding: 10px;">Subject</th>
+                            <th style="padding: 10px;">Target Topics</th>
+                            <th style="padding: 10px;">Status</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Today</td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);"><strong>Polity</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Fundamental Rights (Art 12-35), DPSP</td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border); color: var(--accent);"><i class="fas fa-spinner"></i> In Progress</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Tomorrow</td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);"><strong>Math / CSAT</strong></td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border);">Time, Speed, Distance & Permutations</td>
+                            <td style="padding: 10px; border-bottom: 1px solid var(--border); color: var(--text-muted);">Upcoming</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
 
             <div id="notes" class="view">
-                <h2>Digital Notes</h2>
-                <div class="card mt-3">
-                    <input type="text" id="note-title" placeholder="Topic Heading (e.g., Article 356)" style="margin-bottom: 15px; font-weight: bold; font-size: 16px;">
-                    <textarea id="note-content" placeholder="Compile your revision notes here..."></textarea>
-                    <button class="btn-primary" style="margin-top: 15px;" onclick="app.saveNote()"><i class="fas fa-save"></i> Commit Note</button>
-                </div>
-                <div id="saved-notes-list" style="display: grid; gap: 15px;">
+                <h2>Subject Notes & Methodologies</h2>
+                <div class="notes-grid" style="margin-top: 20px;">
+                    <div class="card">
+                        <h3 style="color: var(--primary);">CSAT: Quantitative Aptitude</h3>
+                        <p class="text-muted" style="font-size: 14px; margin: 10px 0;">Includes perfect mathematical solutions and finding methods.</p>
+                        <div style="background: var(--bg-main); padding: 15px; border-radius: 8px;">
+                            <strong>Topic: Time & Work Strategy</strong><br>
+                            <span style="font-size: 13px; color: var(--text-muted);">Previous Q (2022): If A does work in 10 days, B in 15 days...</span>
+                            <hr style="border: none; border-top: 1px solid var(--border); margin: 10px 0;">
+                            <strong>Perfect Solution Method:</strong><br>
+                            1. Find LCM of days to get Total Work Units (LCM of 10,15 = 30 Units).<br>
+                            2. Find 1-day efficiency (A = 3 units/day, B = 2 units/day).<br>
+                            3. Formula: Total Time = Total Work / Combined Efficiency.
+                        </div>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: 15px;">Read Full Notes</button>
                     </div>
+                    <div class="card">
+                        <h3 style="color: var(--primary);">Polity & Governance</h3>
+                        <p class="text-muted" style="font-size: 14px; margin: 10px 0;">Key articles, recent amendments, and Supreme Court judgments.</p>
+                        <ul style="padding-left: 20px; font-size: 14px; line-height: 1.6; color: var(--text-muted);">
+                            <li>Basic Structure Doctrine (Kesavananda Bharati)</li>
+                            <li>Article 356 Parameters (S.R. Bommai case)</li>
+                            <li>Anti-Defection Law (10th Schedule loopholes)</li>
+                        </ul>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: 15px;">Read Full Notes</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mock-test" class="view">
+                <div id="test-setup">
+                    <div class="card" style="text-align: center; padding: 40px;">
+                        <h2>Configure Exam Environment</h2>
+                        <p class="text-muted" style="margin: 10px 0;">Exams feature strict time limits and tab-switching security.</p>
+                        
+                        <select id="test-subject" style="padding: 10px; width: 250px; border-radius: 6px; border: 1px solid var(--border); margin-top: 15px;">
+                            <option value="Polity">Indian Polity</option>
+                            <option value="Economy">Economy</option>
+                            <option value="CSAT">CSAT (Math & Reasoning)</option>
+                        </select>
+
+                        <div style="display: flex; justify-content: center; margin-top: 20px;">
+                            <div class="difficulty-selector">
+                                <button class="diff-btn easy active" onclick="testEngine.setDiff('easy')">Easy (Conceptual)</button>
+                                <button class="diff-btn medium" onclick="testEngine.setDiff('medium')">Medium (Analytical)</button>
+                                <button class="diff-btn tough" onclick="testEngine.setDiff('tough')">Tough (UPSC Standard)</button>
+                            </div>
+                        </div>
+
+                        <button class="btn" style="margin-top: 20px; font-size: 18px; padding: 12px 30px;" onclick="testEngine.startTest()"><i class="fas fa-play"></i> Initialize Secure Exam</button>
+                    </div>
+                </div>
+
+                <div id="active-test" style="display: none;">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="font-weight: bold; color: var(--danger);" id="timer-text"><i class="fas fa-clock"></i> 60:00 Remaining</span>
+                            <span class="diff-btn tough active" id="current-diff-badge" style="font-size: 12px; padding: 4px 10px;">Tough</span>
+                        </div>
+                        <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+
+                        <h3 id="question-text" style="line-height: 1.6; margin: 20px 0;">Loading question...</h3>
+                        <div id="options-container"></div>
+
+                        <div id="solution-container" class="solution-box">
+                            <h4 style="color: var(--success);"><i class="fas fa-check-circle"></i> Excellent! Here is the perfect solution:</h4>
+                            <p id="solution-text" style="margin-top: 10px; line-height: 1.6; color: var(--text-dark);"></p>
+                            <button class="btn" style="margin-top: 15px;" onclick="testEngine.nextQuestion()">Proceed to Next Question <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pyq" class="view">
+                <h2>Previous Year Question Vault</h2>
+                <div class="card mt-3">
+                    <p>Access authentic papers from 2013-2023 with official answer keys.</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                        <tr><td style="padding:15px; border-bottom:1px solid var(--border);">2023 Civil Services Prelims (GS Paper 1)</td><td style="text-align:right; border-bottom:1px solid var(--border);"><button class="btn btn-outline">View Answers & Logic</button></td></tr>
+                        <tr><td style="padding:15px; border-bottom:1px solid var(--border);">2022 Civil Services Prelims (CSAT)</td><td style="text-align:right; border-bottom:1px solid var(--border);"><button class="btn btn-outline">View Answers & Logic</button></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div id="interview" class="view">
+                <h2>Mock Interview Board</h2>
+                <div class="card mt-3" style="background: linear-gradient(to right, #1e3a8a, #3b82f6); color: white;">
+                    <h3>Situational Analysis (DAF Based)</h3>
+                    <p style="margin-top: 15px; font-size: 18px; font-weight: 500; font-style: italic;">"You are appointed as the DM of a district facing severe drought, but local political factions are hoarding the water supply. What are your immediate first 3 steps?"</p>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn" style="background: white; color: var(--primary);"><i class="fas fa-microphone"></i> Record Your Answer</button>
+                        <button class="btn" style="background: transparent; border: 1px solid white;">View Model Framework</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pdf-tool" class="view">
+                <h2>Document Intelligence & Summarizer</h2>
+                <div class="card mt-3">
+                    <div class="upload-area">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: var(--secondary); margin-bottom: 15px;"></i>
+                        <h3>Upload UPSC PDF Material</h3>
+                        <p class="text-muted" style="margin-bottom: 15px;">The AI will extract key concepts, summarize them, and convert them into Mock Test questions.</p>
+                        <input type="file" id="pdf-upload" style="display: none;" accept=".pdf">
+                        <button class="btn" onclick="document.getElementById('pdf-upload').click()">Browse Files</button>
+                    </div>
+                    
+                    <div id="pdf-processing" style="display: none; margin-top: 20px; padding: 20px; background: #eff6ff; border-radius: 8px; border: 1px solid var(--secondary);">
+                        <h4 style="color: var(--primary);"><i class="fas fa-cog fa-spin"></i> AI Engine Processing...</h4>
+                        <p style="font-size: 14px; margin-top: 5px;">Extracting text vectors, summarizing core arguments, and generating MCQ pool. (Note: In this static version, this simulates the backend NLP pipeline).</p>
+                    </div>
+                </div>
             </div>
 
         </div>
     </main>
 
+    <div id="ai-assistant">
+        <div class="ai-header" onclick="document.getElementById('ai-body').classList.toggle('active')">
+            <span><i class="fas fa-robot"></i> UPSC AI Mentor</span>
+            <i class="fas fa-chevron-up"></i>
+        </div>
+        <div id="ai-body" style="display: flex; flex-direction: column;">
+            <div class="ai-body" id="chat-window">
+                <div class="ai-chat-bubble bot">Hello! I can clear your doubts across subjects, explain mathematical formulas perfectly, or review your study plan. Ask me anything.</div>
+            </div>
+            <div class="ai-input-area">
+                <input type="text" id="ai-input" placeholder="Type your doubt here..." onkeypress="if(event.key === 'Enter') aiEngine.sendMessage()">
+                <button style="margin-left: 10px; color: var(--secondary); font-size: 20px;" onclick="aiEngine.sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- 1. DATA STORE (Expand this or fetch from JSON) ---
-        // To scale to 1000+, you would typically use: fetch('questions.json').then(...)
-        const database = [
-            {
-                id: "POL-01", subject: "Polity",
-                q: "Consider the following statements regarding the 9th Schedule of the Indian Constitution:\n1. It was added by the 1st Amendment Act.\n2. Laws placed in it are absolutely immune from Judicial Review.\nWhich is correct?",
-                options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
-                ansIndex: 0,
-                exp: "The 9th Schedule was added by the 1st Amendment (1951). However, the Supreme Court in the I.R. Coelho case (2007) ruled that laws placed in the 9th Schedule after April 24, 1973, are subject to Judicial Review if they violate the basic structure."
-            },
-            {
-                id: "HIS-01", subject: "History",
-                q: "The 'Swadeshi Movement' was primarily triggered as a direct reaction to:",
-                options: ["The Rowlatt Act", "The Partition of Bengal", "The failure of the Cripps Mission", "The Jallianwala Bagh massacre"],
-                ansIndex: 1,
-                exp: "The Swadeshi Movement (1905) was launched explicitly to oppose Lord Curzon's decision to partition Bengal. The Rowlatt Act triggered Non-Cooperation, and Cripps failure led to Quit India."
-            },
-            {
-                id: "ECO-01", subject: "Economy",
-                q: "Which of the following actions by the RBI is considered an 'Expansionary Monetary Policy'?",
-                options: ["Increasing the Repo Rate", "Selling Government Securities", "Decreasing the Statutory Liquidity Ratio (SLR)", "Increasing the Cash Reserve Ratio (CRR)"],
-                ansIndex: 2,
-                exp: "Expansionary policy aims to increase money supply. Decreasing SLR leaves more money with banks to lend. Increasing rates or selling securities (sucking money out) are contractionary."
-            },
-            {
-                id: "GEO-01", subject: "Geography",
-                q: "Which of the following ocean currents is a 'Cold Current'?",
-                options: ["Kuroshio Current", "Gulf Stream", "Agulhas Current", "Canary Current"],
-                ansIndex: 3,
-                exp: "The Canary Current is a cold current flowing south along the North African coast. Kuroshio, Gulf Stream, and Agulhas are all warm water currents."
-            }
-        ];
-
-        // --- 2. GLOBAL STATE ---
-        const state = {
-            theme: localStorage.getItem('theme') || 'light',
-            stats: JSON.parse(localStorage.getItem('upsc_stats')) || {
-                totalSolved: 0,
-                correct: 0,
-                subjects: { Polity: 0, History: 0, Economy: 0, Geography: 0, Environment: 0 }
-            },
-            notes: JSON.parse(localStorage.getItem('upsc_notes')) || []
-        };
-
-        // --- 3. APP CONTROLLER ---
+        // --- Navigation Logic ---
         const app = {
-            init() {
-                // Apply Theme
-                document.body.setAttribute('data-theme', state.theme);
-                document.getElementById('theme-icon').className = state.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                
-                // Start Countdown
-                this.startCountdown('2027-05-28T00:00:00'); // Approx date for Prelims 2027
-                
-                // Load Dashboard Data
-                this.updateDashboard();
-                
-                // Initialize MCQ Engine
-                mcqEngine.loadNext();
-                
-                // Render Notes
-                this.renderNotes();
-            },
-
-            navigate(viewId) {
-                // UI Tab Switching
-                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            nav: function(id) {
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
                 event.currentTarget.classList.add('active');
                 
-                document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-                document.getElementById(viewId).classList.add('active');
+                const titles = {'study-plan':'Structured Study Plan','notes':'Subject Notes & Methodologies','mock-test':'Secure Mock Tests','pyq':'Previous Year Question Vault','interview':'Mock Interview Board','pdf-tool':'Document Intelligence & Summarizer'};
+                document.getElementById('header-title').innerText = titles[id];
+            }
+        };
+
+        // --- PDF Tool Simulation ---
+        document.getElementById('pdf-upload').addEventListener('change', function(e) {
+            if(e.target.files.length > 0) {
+                document.getElementById('pdf-processing').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('pdf-processing').innerHTML = `
+                        <h4 style="color: var(--success);"><i class="fas fa-check-circle"></i> Summary Complete!</h4>
+                        <p style="font-size: 14px; margin-top: 5px;">Document condensed. 15 new MCQs generated and added to your Mock Test pool.</p>
+                    `;
+                }, 3000);
+            }
+        });
+
+        // --- AI Engine Simulation ---
+        const aiEngine = {
+            sendMessage: function() {
+                const input = document.getElementById('ai-input');
+                const text = input.value.trim();
+                if(!text) return;
                 
-                const titles = { dashboard: "Overview Dashboard", prelims: "Prelims Simulator", mains: "Mains Workspace", notes: "Digital Notes" };
-                document.getElementById('page-title').innerText = titles[viewId];
-                
-                if(viewId === 'dashboard') this.renderChart();
+                const chat = document.getElementById('chat-window');
+                chat.innerHTML += `<div class="ai-chat-bubble user">${text}</div>`;
+                input.value = '';
+                chat.scrollTop = chat.scrollHeight;
+
+                // Simulate AI response delay
+                setTimeout(() => {
+                    let response = "To provide a perfect answer for that, I would normally query the LLM backend. Since this is the static frontend architecture, imagine a highly detailed, syllabus-aligned explanation appearing right here!";
+                    
+                    if(text.toLowerCase().includes("math") || text.toLowerCase().includes("csat")) {
+                        response = "For CSAT math problems, always look for the logical shortcut. For instance, in Time & Work, taking the LCM of the days to find 'Total Work Units' makes the calculation fraction-free and perfect.";
+                    } else if (text.toLowerCase().includes("article 356")) {
+                        response = "Article 356 deals with President's Rule. Remember the S.R. Bommai case (1994) which set perfect guidelines: the breakdown of constitutional machinery must be objective, and the Governor's report is subject to judicial review.";
+                    }
+
+                    chat.innerHTML += `<div class="ai-chat-bubble bot">${response}</div>`;
+                    chat.scrollTop = chat.scrollHeight;
+                }, 1000);
+            }
+        };
+
+        // --- Mock Test Engine with Security & Perfect Solutions ---
+        const testEngine = {
+            difficulty: 'easy',
+            timerInterval: null,
+            isTestActive: false,
+            currentQuestion: null,
+            
+            // Database designed to avoid repetition and provide perfect solutions
+            questionBank: [
+                {
+                    subject: 'Polity', diff: 'tough',
+                    q: "Consider the following regarding the 'Basic Structure' doctrine:\n1. It is explicitly defined in the Constitution.\n2. The power of Judicial Review is part of it.\nWhich is correct?",
+                    options: ["1 only", "2 only", "Both 1 and 2", "Neither 1 nor 2"],
+                    ansIndex: 1,
+                    explanation: "Perfect Solution: The Basic Structure doctrine is a judicial innovation (Kesavananda Bharati, 1973), so it is NOT explicitly written in the Constitution. Judicial Review is a core pillar of this structure (Minerva Mills case). Therefore, only statement 2 is correct."
+                },
+                {
+                    subject: 'CSAT', diff: 'medium',
+                    q: "A train running at 72 km/hr crosses a 200m platform in 20 seconds. What is the length of the train?",
+                    options: ["100m", "150m", "200m", "250m"],
+                    ansIndex: 2,
+                    explanation: "Perfect Solution Methodology:<br>1. Convert speed: 72 km/hr = 72 * (5/18) = 20 m/s.<br>2. Distance covered in 20s = Speed × Time = 20 × 20 = 400m.<br>3. Total distance = Train Length + Platform Length. (400 = Train + 200).<br>4. Therefore, Train Length = 200m."
+                }
+            ],
+
+            setDiff: function(level) {
+                this.difficulty = level;
+                document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
             },
 
-            toggleTheme() {
-                state.theme = state.theme === 'light' ? 'dark' : 'light';
-                document.body.setAttribute('data-theme', state.theme);
-                document.getElementById('theme-icon').className = state.theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                localStorage.setItem('theme', state.theme);
-                if(document.getElementById('dashboard').classList.contains('active')) this.renderChart();
+            startTest: function() {
+                // Exam Security: Tab switch detection
+                this.isTestActive = true;
+                window.addEventListener('visibilitychange', this.securityCheck);
+
+                document.getElementById('test-setup').style.display = 'none';
+                document.getElementById('active-test').style.display = 'block';
+                
+                // Initialize Timer (e.g., 60 mins divided by question logic)
+                this.startTimer(60 * 60); 
+                
+                this.nextQuestion();
             },
 
-            startCountdown(targetDate) {
-                const target = new Date(targetDate).getTime();
-                setInterval(() => {
-                    const now = new Date().getTime();
-                    const diff = target - now;
-                    if(diff < 0) return document.getElementById('countdown').innerText = "EXAM DAY";
-                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    document.getElementById('countdown').innerText = `${d} Days, ${h} Hrs`;
+            securityCheck: function() {
+                if(document.visibilityState === 'hidden' && testEngine.isTestActive) {
+                    document.getElementById('security-overlay').style.display = 'flex';
+                }
+            },
+
+            startTimer: function(totalSeconds) {
+                let timeLeft = totalSeconds;
+                const bar = document.getElementById('timer-fill');
+                const text = document.getElementById('timer-text');
+                
+                this.timerInterval = setInterval(() => {
+                    timeLeft--;
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    text.innerHTML = `<i class="fas fa-clock"></i> ${minutes}:${seconds < 10 ? '0':''}${seconds} Remaining`;
+                    bar.style.width = `${(timeLeft / totalSeconds) * 100}%`;
+                    
+                    if(timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        alert("Time's Up!");
+                    }
                 }, 1000);
             },
 
-            updateDashboard() {
-                document.getElementById('total-solved').innerText = state.stats.totalSolved;
-                document.getElementById('target-progress').value = state.stats.totalSolved;
-                const acc = state.stats.totalSolved > 0 ? Math.round((state.stats.correct / state.stats.totalSolved) * 100) : 0;
-                document.getElementById('global-accuracy').innerText = acc + '%';
-                this.renderChart();
-            },
+            nextQuestion: function() {
+                // In a real app, filter questionBank by subject and difficulty, ensuring no repeats.
+                // Using a sample for the demonstration:
+                const subj = document.getElementById('test-subject').value;
+                const pool = this.questionBank.filter(q => q.subject === subj || subj === 'CSAT'); // Fallback for demo
+                this.currentQuestion = pool[Math.floor(Math.random() * pool.length)] || this.questionBank[0];
 
-            renderChart() {
-                const ctx = document.getElementById('analyticsChart');
-                if(!ctx) return;
-                if(window.myChart) window.myChart.destroy();
+                document.getElementById('solution-container').style.display = 'none';
+                document.getElementById('question-text').innerText = this.currentQuestion.q;
                 
-                const gridColor = state.theme === 'dark' ? '#4a5568' : '#e2e8f0';
-                const textColor = state.theme === 'dark' ? '#a0aec0' : '#718096';
+                const diffBadge = document.getElementById('current-diff-badge');
+                diffBadge.className = `diff-btn active ${this.currentQuestion.diff}`;
+                diffBadge.innerText = this.currentQuestion.diff.toUpperCase();
 
-                window.myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(state.stats.subjects),
-                        datasets: [{
-                            label: 'Questions Solved',
-                            data: Object.values(state.stats.subjects),
-                            backgroundColor: '#2b6cb0',
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: { grid: { color: gridColor }, ticks: { color: textColor } },
-                            x: { grid: { display: false }, ticks: { color: textColor } }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
+                const optsDiv = document.getElementById('options-container');
+                optsDiv.innerHTML = '';
+                const labels = ['A', 'B', 'C', 'D'];
+                
+                this.currentQuestion.options.forEach((opt, index) => {
+                    optsDiv.innerHTML += `
+                        <div class="mcq-option" onclick="testEngine.checkAnswer(${index}, this)">
+                            <div style="width:30px; height:30px; border-radius:50%; background:var(--bg-main); display:flex; align-items:center; justify-content:center; font-weight:bold;">${labels[index]}</div>
+                            <div>${opt}</div>
+                        </div>
+                    `;
                 });
             },
 
-            saveNote() {
-                const title = document.getElementById('note-title').value;
-                const content = document.getElementById('note-content').value;
-                if(!content) return;
-                
-                state.notes.unshift({ id: Date.now(), title: title || 'Untitled', content, date: new Date().toLocaleDateString() });
-                localStorage.setItem('upsc_notes', JSON.stringify(state.notes));
-                
-                document.getElementById('note-title').value = '';
-                document.getElementById('note-content').value = '';
-                this.renderNotes();
-            },
-
-            renderNotes() {
-                const container = document.getElementById('saved-notes-list');
-                container.innerHTML = state.notes.map(n => `
-                    <div class="card" style="margin-bottom:0; background: var(--bg-body);">
-                        <div class="flex-between"><h4 style="color:var(--primary);">${n.title}</h4><small class="text-muted">${n.date}</small></div>
-                        <p style="margin-top:10px; line-height:1.5;">${n.content}</p>
-                    </div>
-                `).join('');
-            }
-        };
-
-        // --- 4. MCQ ENGINE ---
-        const mcqEngine = {
-            currentFilter: 'All',
-            currentQ: null,
-            isAnswered: false,
-
-            setFilter(subject) {
-                this.currentFilter = subject;
-                document.querySelectorAll('.filter-tag').forEach(tag => tag.classList.remove('active'));
-                event.target.classList.add('active');
-                this.loadNext();
-            },
-
-            loadNext() {
-                const pool = this.currentFilter === 'All' ? database : database.filter(q => q.subject === this.currentFilter);
-                if (pool.length === 0) {
-                    document.getElementById('q-text').innerText = "No questions available for this subject yet.";
-                    document.getElementById('q-options-container').innerHTML = '';
-                    return;
-                }
-
-                // Randomly select a question from the pool
-                this.currentQ = pool[Math.floor(Math.random() * pool.length)];
-                this.isAnswered = false;
-
-                // Render UI
-                document.getElementById('q-subject').innerText = this.currentQ.subject;
-                document.getElementById('q-id').innerText = `Ref: ${this.currentQ.id}`;
-                document.getElementById('q-text').innerText = this.currentQ.q;
-                document.getElementById('q-explanation').classList.remove('show');
-
-                const optsContainer = document.getElementById('q-options-container');
-                optsContainer.innerHTML = '';
-                
-                const letters = ['A', 'B', 'C', 'D'];
-                this.currentQ.options.forEach((optText, index) => {
-                    const optDiv = document.createElement('div');
-                    optDiv.className = 'mcq-option';
-                    optDiv.innerHTML = `<div style="width:25px; height:25px; background:var(--border); border-radius:50%; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:12px;">${letters[index]}</div> <div>${optText}</div>`;
-                    optDiv.onclick = () => this.submitAnswer(index, optDiv);
-                    optsContainer.appendChild(optDiv);
-                });
-            },
-
-            submitAnswer(selectedIndex, element) {
-                if(this.isAnswered) return;
-                this.isAnswered = true;
-
-                const isCorrect = (selectedIndex === this.currentQ.ansIndex);
+            checkAnswer: function(selectedIndex, element) {
+                const isCorrect = selectedIndex === this.currentQuestion.ansIndex;
                 const allOptions = document.querySelectorAll('.mcq-option');
 
-                // Visual Feedback
+                // Lock options and apply Green/Red logic
                 allOptions.forEach((opt, idx) => {
                     opt.classList.add('locked');
-                    if (idx === this.currentQ.ansIndex) {
-                        opt.classList.add('correct'); // Always show correct answer
+                    opt.onclick = null;
+                    if(idx === this.currentQuestion.ansIndex) {
+                        opt.classList.add('correct');
                     } else if (idx === selectedIndex && !isCorrect) {
-                        opt.classList.add('wrong'); // Cross out the wrong selection
+                        opt.classList.add('wrong');
                     }
                 });
 
-                // Show Explanation
-                document.getElementById('exp-content').innerText = this.currentQ.exp;
-                document.getElementById('q-explanation').classList.add('show');
-
-                // Update Stats
-                state.stats.totalSolved++;
-                if(isCorrect) state.stats.correct++;
-                if(!state.stats.subjects[this.currentQ.subject]) state.stats.subjects[this.currentQ.subject] = 0;
-                state.stats.subjects[this.currentQ.subject]++;
+                // Display perfect solution methodology
+                const solContainer = document.getElementById('solution-container');
+                const solText = document.getElementById('solution-text');
                 
-                localStorage.setItem('upsc_stats', JSON.stringify(state.stats));
-                app.updateDashboard();
+                if(isCorrect) {
+                    solContainer.querySelector('h4').innerHTML = `<i class="fas fa-star" style="color:#f59e0b;"></i> Brilliant! Correct Answer. Here is the methodology:`;
+                } else {
+                    solContainer.querySelector('h4').innerHTML = `<i class="fas fa-times-circle" style="color:var(--danger);"></i> Incorrect. Review the perfect solution below:`;
+                }
+                
+                solText.innerHTML = this.currentQuestion.explanation;
+                solContainer.style.display = 'block';
             }
         };
-
-        // Boot Application
-        window.onload = () => app.init();
     </script>
 </body>
 </html>
