@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC Notes</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.notes-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+textarea{
+    width:100%;
+    height:400px;
+    padding:10px;
+    font-size:16px;
+}
+
+select{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+<h1>UPSC Notes</h1>
+</header>
+
+<nav>
+<a href="index.html">Dashboard</a>
+<a href="syllabus.html">Syllabus</a>
+<a href="quiz.html">MCQ Practice</a>
+<a href="mains.html">Mains</a>
+<a href="currentaffairs.html">Current Affairs</a>
+<a href="planner.html">Planner</a>
+<a href="notes.html">Notes</a>
+</nav>
+
+<main>
+
+<div class="notes-box">
+
+<h2>Subject Notes</h2>
+
+<select id="subject">
+<option>History</option>
+<option>Geography</option>
+<option>Polity</option>
+<option>Economy</option>
+<option>Environment</option>
+<option>Science & Technology</option>
+<option>Current Affairs</option>
+<option>Ethics</option>
+</select>
+
+<textarea
+id="notesArea"
+placeholder="Write your UPSC notes here...">
+</textarea>
+
+<br><br>
+
+<button onclick="saveNotes()">
+Save Notes
+</button>
+
+<button onclick="loadNotes()">
+Load Notes
+</button>
+
+</div>
+
+</main>
+
+<footer>
+<p>UPSC Civil Services Preparation Portal</p>
+</footer>
+
+<script>
+
+function saveNotes(){
+
+let subject =
+document.getElementById("subject").value;
+
+let notes =
+document.getElementById("notesArea").value;
+
+localStorage.setItem(
+"notes_" + subject,
+notes
+);
+
+alert("Notes Saved");
+}
+
+function loadNotes(){
+
+let subject =
+document.getElementById("subject").value;
+
+let notes =
+localStorage.getItem(
+"notes_" + subject
+);
+
+document.getElementById("notesArea").value =
+notes || "";
+}
+
+document.getElementById("subject")
+.addEventListener("change",loadNotes);
+
+loadNotes();
+
+</script>
+
+</body>
+</html>
